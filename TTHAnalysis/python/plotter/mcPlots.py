@@ -580,8 +580,10 @@ class PlotMaker:
             for i,(cn,cv) in enumerate(allcuts[:-1]): # skip the last one which is equal to all cuts
                 cnsafe = "cut_%02d_%s" % (i, re.sub("[^a-zA-Z0-9_.]","",cn.replace(" ","_")))
                 sets.append((cnsafe,cn,cv))
+        elist = (self._options.elist == True) or (self._options.elist == 'auto' and len(plots.plots()) > 2)
         for subname, title, cut in sets:
             print "cut set: ",title
+            if elist: mca.applyCut(cut)
             dir = self._dir
             if subname:
                 if self._dir.Get(subname):
@@ -662,6 +664,8 @@ class PlotMaker:
                                   makeCanvas=makeCanvas,
                                   outputDir=dir,
                                   printDir=self._options.printDir+(("/"+subname) if subname else ""))
+
+            if elist: mca.clearCut()
 
     def printOnePlot(self,mca,pspec,pmap,makeCanvas=True,outputDir=None,printDir=None,xblind=[9e99,-9e99],extraProcesses=[],plotmode="auto",outputName=None):
                 options = self._options
@@ -953,6 +957,8 @@ def addPlotMakerOptions(parser, addAlsoMCAnalysis=True):
     parser.add_option("--toleranceForDiff", dest="toleranceForDiff", default=0.0, type="float", help="set numerical tollerance to define when two histogram bins are considered different");
     parser.add_option("--pseudoData", dest="pseudoData", type="string", default=None, help="If set to 'background' or 'all', it will plot also a pseudo-dataset made from background (or signal+background) with Poisson fluctuations in each bin.")
     parser.add_option("--wide", dest="wideplot", action="store_true", default=False, help="Draw a wide canvas")
+    parser.add_option("--elist", dest="elist", action="store_true", default='auto', help="Use elist (on by default if making more than 2 plots)")
+    parser.add_option("--no-elist", dest="elist", action="store_false", default='auto', help="Don't elist (which are on by default if making more than 2 plots)")
 
 if __name__ == "__main__":
     from optparse import OptionParser
