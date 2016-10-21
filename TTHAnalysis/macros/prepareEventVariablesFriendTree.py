@@ -285,6 +285,14 @@ MODULES.append( ('LepMVAFriendJetLessIVFNOTAU_SIGDY', lambda: LepMVAFriend((os.e
                                                                     os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/leptonMVA/jetless/SoftJetLessIVFNOTAU_SIGDY_%s_BDTG.weights.xml",),
                                                                    training="SoftJetLessIVF", label="JetLessIVFNOTAU_SIGDY")) )
 
+
+#--- SV MVA in friend tree 
+
+from CMGTools.TTHAnalysis.tools.SVMVAFriend import SVMVAFriend
+MODULES.append( ('SVMVAFriend', lambda: SVMVAFriend(os.environ["CMSSW_BASE"]+"/src/CMGTools/TTHAnalysis/data/btag/ivf")))
+
+
+
 class VariableProducer(Module):
     def __init__(self,name,booker,modules):
         Module.__init__(self,name,booker)

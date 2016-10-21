@@ -51,8 +51,8 @@ _CommonVars = [
   
     MVAVar("SV_ntracks",lambda x: x.ntracks),  
     MVAVar("SV_mass",lambda x: x.mass),
-    MVAVar("SV_ip2d := abs(SV_dxy)", lambda x : abs(x.dxy)),
-    MVAVar("SV_sip2d := abs(SV_dxy/SV_edxy)", lambda x : abs(x.dxy/x.edxy)),
+    #MVAVar("SV_ip2d := abs(SV_dxy)", lambda x : abs(x.dxy)),
+    #MVAVar("SV_sip2d := abs(SV_dxy/SV_edxy)", lambda x : abs(x.dxy/x.edxy)),
     MVAVar("SV_ip3d", lambda x : x.ip3d ),
     MVAVar("SV_sip3d", lambda x : x.sip3d ),
     MVAVar("SV_chi2n := min(SV_chi2/max(1,SV_ndof),10)",lambda x: min(x.chi2/max(1,x.ndof),10) ),
@@ -78,38 +78,40 @@ class SVMVAFriend:
         self.mva = SVMVA(path+"/weights/%s_BDTG.weights.xml")
         self.fast = fast
     def listBranches(self):
-        return [ ("nSV","I"), ("SV_mva","F",20,"nSV"), ("nSV25_loose","I"), ("nSV25_medium","I"), ("nSV25_tight","I"), ("nSV25_stight","I")]
+        return [ ("nSV","I"), ("SV_mvaNewNo2D","F",20,"nSV"), ("nSV25_loose","I"), ("nSV25_medium","I"), ("nSV25_tight","I"), ("nSV25_stight","I")]
     def __call__(self,event):
         sv = Collection(event,"SV","nSV",20)
         ret = { 'nSV' : event.nSV }
         if event.run >= 1: # DATA
-            ret['SV_mva'] = [ self.mva(s, ncorr=0) for s in sv ] 
+            ret['SV_mvaNewNo2D'] = [ self.mva(s, ncorr=0) for s in sv ] 
         else:              # MC
-            ret['SV_mva'] = [ self.mva(s, ncorr=0) for s in sv ] 
+            ret['SV_mvaNewNo2D'] = [ self.mva(s, ncorr=0) for s in sv ] 
         ret['nSV25_loose'] = 0
         ret['nSV25_medium'] = 0
         ret['nSV25_tight'] = 0
         ret['nSV25_stight'] = 0
         for i,s in enumerate(sv):    
-            if ret['SV_mva'][i] >= 0.3 and (s.jetPt < 25 or s.jetBTag<0.679): 
+            if ret['SV_mvaNewNo2D'][i] >= 0.3 and (s.jetPt < 25 or s.jetBTagCSV<0.679): 
                 ret['nSV25_loose'] += 1 
-            if ret['SV_mva'][i] >= 0.7 and (s.jetPt < 25 or s.jetBTag<0.679):     
+            if ret['SV_mvaNewNo2D'][i] >= 0.7 and (s.jetPt < 25 or s.jetBTagCSV<0.679):     
                 ret['nSV25_medium'] += 1
-            if ret['SV_mva'][i] >= 0.9 and (s.jetPt < 25 or s.jetBTag<0.679):     
+            if ret['SV_mvaNewNo2D'][i] >= 0.9 and (s.jetPt < 25 or s.jetBTagCSV<0.679):     
                 ret['nSV25_tight'] += 1
-            if ret['SV_mva'][i] >= 0.96 and (s.jetPt < 25 or s.jetBTag<0.679):     
+            if ret['SV_mvaNewNo2D'][i] >= 0.96 and (s.jetPt < 25 or s.jetBTagCSV<0.679):     
                 ret['nSV25_stight'] += 1    
         return ret
 
 if __name__ == '__main__':
     from sys import argv
     file = ROOT.TFile(argv[1])
-    tree = file.Get("treeProducerSusyMultilepton")
+    #tree = file.Get("treeProducerSusyMultilepton")
+    tree = file.Get("tree")
     tree.vectorTree = True
     class Tester(Module):
         def __init__(self, name):
             Module.__init__(self,name,None)
-            self.sf = SVMVAFriend("/afs/cern.ch/user/b/botta/CMGToolsGit/newRecipe70/CMSSW_7_0_6_patch1/src/CMGTools/TTHAnalysis/python/plotter/object-studies/")
+            #self.sf = SVMVAFriend("/afs/cern.ch/user/b/botta/CMGToolsGit/newRecipe70/CMSSW_7_0_6_patch1/src/CMGTools/TTHAnalysis/python/plotter/object-studies/")
+            self.sf = SVMVAFriend("/afs/cern.ch/user/b/botta/CMGToolsGit/newRecipe80/CMGToolsLite/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/macros/leptons/")
         def analyze(self,ev):
             print "\nrun %6d lumi %4d event %d: leps %d" % (ev.run, ev.lumi, ev.evt, ev.nSV)
             print self.sf(ev)
