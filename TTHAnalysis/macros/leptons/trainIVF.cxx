@@ -1,9 +1,9 @@
 void trainIVF(TString name, TString train="GoodvsBad") {
-    TTree *dSig = (TTree*) _file0->Get("treeProducerSusyMultilepton");
-    TTree *dBg1 = (TTree*) _file1->Get("treeProducerSusyMultilepton");
+    TTree *dSig = (TTree*) _file0->Get("tree");
+    TTree *dBg1 = (TTree*) _file1->Get("tree");
     TFile *fOut = new TFile(name+".root","RECREATE");
-    TMVA::Factory *factory = new TMVA::Factory(name, fOut, "!V:!Color");
-
+    //TMVA::Factory *factory = new TMVA::Factory(name, fOut, "!V:!Color");
+    TMVA::Factory *factory = new TMVA::Factory(name, fOut, "!V:!Color:Transformations=I");
     
     if (!name.Contains("pteta")) {
         factory->AddSpectator("SV_pt", 'D');
@@ -13,14 +13,15 @@ void trainIVF(TString name, TString train="GoodvsBad") {
     //common variables
     factory->AddVariable("SV_ntracks", 'D'); allvars += "ntracks";
     factory->AddVariable("SV_mass", 'D'); allvars += ":mass";
-    factory->AddVariable("SV_ip2d := abs(SV_dxy)", 'D'); allvars += ":ip2d";
-    factory->AddVariable("SV_sip2d := abs(SV_dxy/SV_edxy)", 'D'); allvars += ":sip2d";
+    //factory->AddVariable("SV_ip2d := abs(SV_dxy)", 'D'); allvars += ":ip2d";
+    //factory->AddVariable("SV_sip2d := abs(SV_dxy/SV_edxy)", 'D'); allvars += ":sip2d";
     factory->AddVariable("SV_ip3d", 'D'); allvars += ":ip3d";
     factory->AddVariable("SV_sip3d", 'D'); allvars += ":sip3d";
     factory->AddVariable("SV_chi2n := min(SV_chi2/max(1,SV_ndof),10)", 'D'); allvars += ":chi2n";
     factory->AddVariable("SV_cosTheta := max(SV_cosTheta,0.98)"); allvars += ":cosTheta";
 
-    TCut lepton = "SV_pt > 5 && SV_cosTheta > 0.98 && abs(SV_dxy) < 3";
+    //TCut lepton = "SV_pt > 5 && SV_cosTheta > 0.98 && abs(SV_dxy) < 3";
+    TCut lepton = "SV_cosTheta > 0.98 && abs(SV_dxy) < 3";
     if (name.Contains("pteta")) {
         if (name.Contains("low_b"))  lepton += "SV_pt <= 15 && abs(SV_eta) <  1.2";
         if (name.Contains("low_e"))  lepton += "SV_pt <= 15 && abs(SV_eta) >= 1.2";

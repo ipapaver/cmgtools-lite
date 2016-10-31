@@ -1,3 +1,6 @@
+TT_true: TTJets: 1: SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kGray+1, Label="tt"
+TT_fake: TTJets: 1: SV_mcMatchFraction < 0.5; FillColor=ROOT.kGray+1, Label="tt"
+
 #T1ttt+: T1tttt_PU20bx25: 1 ; FillColor=ROOT.kOrange+10
 #DY : DYJetsM50_HT200to400_PU_S14_POSTLS170 : 1 ; FillColor=ROOT.kCyan
 #TT: TTJets_PUS14: 1 ; FillColor=ROOT.kGray+1
@@ -5,10 +8,10 @@
 
 #T1ttt_true+: T1tttt_PU20bx25: 1 : SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kOrange+10, Label="SUSY" 
 #T1ttt_true+: T1tttt2J_6_PU_S14_POSTLS170: 1 : SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kOrange+10, Label="SUSY" 
-T2tt_true : T2tt_S14 : 1: SV_mcMatchFraction > 0.66  ; FillColor=ROOT.kAzure-1, Label="T2tt 0.4/0.3" 
-TT_true: TTJets_PUS14: 1: SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kGray+1, Label="Top"
-DY_fake    : DYJetsM50_HT200to400_PU_S14_POSTLS170  : 1 : SV_mcMatchFraction < 0.5; FillColor=ROOT.kCyan, Label="Fake DY"
-WJets_fake : WJetsToLNu_HT400to600_PU_S14_POSTLS170 : 1 : SV_mcMatchFraction < 0.5; FillColor=ROOT.kCyan+2, Label="Fake Wj"
+#T2tt_true : T2tt_S14 : 1: SV_mcMatchFraction > 0.66  ; FillColor=ROOT.kAzure-1, Label="T2tt 0.4/0.3" 
+#TT_true: TTJets_PUS14: 1: SV_mcMatchFraction > 0.66 ; FillColor=ROOT.kGray+1, Label="Top"
+#DY_fake    : DYJetsM50_HT200to400_PU_S14_POSTLS170  : 1 : SV_mcMatchFraction < 0.5; FillColor=ROOT.kCyan, Label="Fake DY"
+#WJets_fake : WJetsToLNu_HT400to600_PU_S14_POSTLS170 : 1 : SV_mcMatchFraction < 0.5; FillColor=ROOT.kCyan+2, Label="Fake Wj"
 
 #T2tt_bstop : T2tt_S14 : 1: abs(GenBHad_sourceId==1000006)  ;  FillColor=ROOT.kCyan, Label="GenB(stop)"
 #T2tt_bstopJet40CSVM : T2tt_S14 : 1: abs(GenBHad_sourceId==1000006) && GenBHad_jetPt>40 && GenBHad_jetBTag>0.679  ; FillColor=ROOT.kAzure-1, Label="GenB(stop) Bjet40-CSVM" 
