@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <MethodSetup Method="LD::LD">
   <GeneralInfo>
-    <Info name="TMVA Release" value="4.1.0 [262400]"/>
-    <Info name="ROOT Release" value="5.28/00 [334848]"/>
+    <Info name="TMVA Release" value="4.2.1 [262657]"/>
+    <Info name="ROOT Release" value="6.06/01 [394753]"/>
     <Info name="Creator" value="botta"/>
-    <Info name="Date" value="Mon Sep 22 13:41:21 2014"/>
-    <Info name="Host" value="Linux lxbuild148.cern.ch 2.6.18-194.26.1.el5 #1 SMP Wed Nov 10 09:45:46 CET 2010 x86_64 x86_64 x86_64 GNU/Linux"/>
-    <Info name="Dir" value="/afs/cern.ch/user/b/botta/CMGToolsGit/newRecipe70/CMSSW_7_0_6_patch1/src/CMGTools/TTHAnalysis/python/plotter/object-studies"/>
-    <Info name="Training events" value="414584"/>
-    <Info name="TrainingTime" value="1.02047"/>
+    <Info name="Date" value="Wed Oct 19 15:39:17 2016"/>
+    <Info name="Host" value="Linux vocms0315.cern.ch 2.6.32-573.26.1.el6.x86_64 #1 SMP Wed May 4 09:23:05 CEST 2016 x86_64 x86_64 x86_64 GNU/Linux"/>
+    <Info name="Dir" value="/afs/cern.ch/user/b/botta/CMGToolsGit/newRecipe80/CMGToolsLite/CMSSW_8_0_11/src/CMGTools/TTHAnalysis/macros/leptons"/>
+    <Info name="Training events" value="330531"/>
+    <Info name="TrainingTime" value="2.78697014e-01"/>
     <Info name="AnalysisType" value="Classification"/>
   </GeneralInfo>
   <Options>
@@ -19,28 +19,28 @@
     <Option name="CreateMVAPdfs" modified="No">False</Option>
     <Option name="IgnoreNegWeightsInTraining" modified="No">False</Option>
   </Options>
-  <Variables NVar="8">
-    <Variable VarIndex="0" Expression="SV_ntracks" Label="SV_ntracks" Title="SV_ntracks" Unit="" Internal="SV_ntracks" Type="D" Min="1" Max="16"/>
-    <Variable VarIndex="1" Expression="SV_mass" Label="SV_mass" Title="SV_mass" Unit="" Internal="SV_mass" Type="D" Min="0.13957" Max="55.7068"/>
-    <Variable VarIndex="2" Expression="abs(SV_dxy)" Label="SV_ip2d" Title="SV_ip2d" Unit="" Internal="SV_ip2d" Type="D" Min="0.00493075" Max="2.99989"/>
-    <Variable VarIndex="3" Expression="abs(SV_dxy/SV_edxy)" Label="SV_sip2d" Title="SV_sip2d" Unit="" Internal="SV_sip2d" Type="D" Min="0.0732822" Max="515.622"/>
-    <Variable VarIndex="4" Expression="SV_ip3d" Label="SV_ip3d" Title="SV_ip3d" Unit="" Internal="SV_ip3d" Type="D" Min="0.0085749" Max="5.43864"/>
-    <Variable VarIndex="5" Expression="SV_sip3d" Label="SV_sip3d" Title="SV_sip3d" Unit="" Internal="SV_sip3d" Type="D" Min="0.0633298" Max="519.248"/>
-    <Variable VarIndex="6" Expression="min(SV_chi2/max(1,SV_ndof),10)" Label="SV_chi2n" Title="SV_chi2n" Unit="" Internal="SV_chi2n" Type="D" Min="7.6482e-09" Max="10"/>
-    <Variable VarIndex="7" Expression="max(SV_cosTheta,0.98)" Label="SV_cosTheta" Title="SV_cosTheta" Unit="" Internal="SV_cosTheta" Type="F" Min="0.980005" Max="1"/>
+  <Variables NVar="6">
+    <Variable VarIndex="0" Expression="SV_ntracks" Label="SV_ntracks" Title="SV_ntracks" Unit="" Internal="SV_ntracks" Type="D" Min="2.00000000e+00" Max="2.20000000e+01"/>
+    <Variable VarIndex="1" Expression="SV_mass" Label="SV_mass" Title="SV_mass" Unit="" Internal="SV_mass" Type="D" Min="6.25213832e-02" Max="8.82059555e+01"/>
+    <Variable VarIndex="2" Expression="SV_ip3d" Label="SV_ip3d" Title="SV_ip3d" Unit="" Internal="SV_ip3d" Type="D" Min="5.27807837e-03" Max="5.40474415e+00"/>
+    <Variable VarIndex="3" Expression="SV_sip3d" Label="SV_sip3d" Title="SV_sip3d" Unit="" Internal="SV_sip3d" Type="D" Min="1.19230552e-02" Max="5.55565613e+02"/>
+    <Variable VarIndex="4" Expression="min(SV_chi2/max(1,SV_ndof),10)" Label="SV_chi2n" Title="SV_chi2n" Unit="" Internal="SV_chi2n" Type="D" Min="3.53813401e-09" Max="1.00000000e+01"/>
+    <Variable VarIndex="5" Expression="max(SV_cosTheta,0.98)" Label="SV_cosTheta" Title="SV_cosTheta" Unit="" Internal="SV_cosTheta" Type="F" Min="9.80001092e-01" Max="1.00000000e+00"/>
   </Variables>
   <Spectators NSpec="0"/>
+  <Classes NClass="2">
+    <Class Name="Signal" Index="0"/>
+    <Class Name="Background" Index="1"/>
+  </Classes>
   <Transformations NTransformations="0"/>
   <MVAPdfs/>
-  <Weights NOut="1" NCoeff="9">
-    <Coefficient IndexOut="0" IndexCoeff="0" Value="-2.1077610361168557e+00"/>
-    <Coefficient IndexOut="0" IndexCoeff="1" Value="3.3213573982493472e-03"/>
-    <Coefficient IndexOut="0" IndexCoeff="2" Value="-5.7504869991902297e-03"/>
-    <Coefficient IndexOut="0" IndexCoeff="3" Value="-1.7736289314136400e-03"/>
-    <Coefficient IndexOut="0" IndexCoeff="4" Value="-4.1428582625790966e-04"/>
-    <Coefficient IndexOut="0" IndexCoeff="5" Value="-1.6216039009577798e-03"/>
-    <Coefficient IndexOut="0" IndexCoeff="6" Value="6.5242457269398813e-04"/>
-    <Coefficient IndexOut="0" IndexCoeff="7" Value="2.0796738968007489e-03"/>
-    <Coefficient IndexOut="0" IndexCoeff="8" Value="4.2098060640273616e+00"/>
+  <Weights NOut="1" NCoeff="7">
+    <Coefficient IndexOut="0" IndexCoeff="0" Value="-1.3821124944740371e+01"/>
+    <Coefficient IndexOut="0" IndexCoeff="1" Value="6.2746118251961747e-02"/>
+    <Coefficient IndexOut="0" IndexCoeff="2" Value="-3.3240983663219481e-02"/>
+    <Coefficient IndexOut="0" IndexCoeff="3" Value="7.3997417275293742e-02"/>
+    <Coefficient IndexOut="0" IndexCoeff="4" Value="5.3218043269128643e-03"/>
+    <Coefficient IndexOut="0" IndexCoeff="5" Value="2.9099278232550319e-02"/>
+    <Coefficient IndexOut="0" IndexCoeff="6" Value="2.7367275059543317e+01"/>
   </Weights>
 </MethodSetup>
