@@ -194,7 +194,8 @@ class BTagScaleFactors(object):
         v_sys = getattr(ROOT, 'vector<string>')()
 
         for wp in [0, 1, 2]:
-            for syst in ['central', 'up', 'down', 'up_correlated', 'down_correlated']:
+            for syst in ['central']:
+            ######for syst in ['central', 'up', 'down', 'up_correlated', 'down_correlated']:
                 for flavor in [0, 1, 2]:
                     self.readers[(self.mtypes[flavor], wp, syst, flavor)] = BTagCalibrationReader(
                                                         wp,
@@ -257,7 +258,7 @@ class BTagScaleFactors(object):
             If unknown wp/syst/mtype/flavor, returns -1.0
         """
 
-        raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
+        ###raise RuntimeError, 'BTagScaleFactors.py: some weights were observed to be set to zero. This should be fixed before the module can be used.'
 
         flavor_new = {5:0, 4:1, 0:2}.get(flavor, None)
         if flavor_new == None:

@@ -46,21 +46,45 @@ class BTagEventWeightFriend:
 
         return out
 
+    def getJets(self, event, postfix=""):
+        goodJets  = [j for j in Collection(event, "Jet"    , "nJet"    )]
+        discJets  = [j for j in Collection(event, "DiscJet", "nDiscJet")]
+        if hasattr(event, "iJSel"): 
+            jets = []
+            indices = list(getattr(event, "iJSel"+postfix))[0:int(getattr(event,"nJetSel"+postfix))]
+            for idx in indices:
+                if abs(idx)>99: continue
+                if idx >= 0: jets.append(goodJets[idx])
+                else       : jets.append(discJets[-idx-1])
+        else:
+            jets = goodJets
+        return jets
+
     def __call__(self, event):
         ret = {k:1.0 for k in self.branches}
         if self.mcOnly and event.isData: return ret
 
+        jets, jetsup, jetsdn = self.getJets(event,""),self.getJets(event,"_jecUp"),self.getJets(event,"_jecDown")
+
         jetscoll = {}
         for _var in self.systsJEC:
-            jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
-            jetptcut = 25
-            if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+            if (_var==0): jets = jets
+            elif (_var==1): jets = jetsup
+            elif (_var==-1): jets = jetsdn
             if (_var==0): jetcorr = [1 for x in jets]
             elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
             elif (_var==-1): jetcorr = [x.corr_JECDown/x.corr for x in jets]
             jetscoll[_var]=(jets,jetcorr)
+            
+            #jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
+            #jetptcut = 25
+            #if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
+            #elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
+            #elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+            #if (_var==0): jetcorr = [1 for x in jets]
+            #elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
+            #elif (_var==-1): jetcorr = [x.corr_JECDown/x.corr for x in jets]
+            #jetscoll[_var]=(jets,jetcorr)
 
         for syst in self.btag_systs:
 

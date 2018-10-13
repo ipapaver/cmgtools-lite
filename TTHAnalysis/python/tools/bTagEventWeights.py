@@ -36,8 +36,8 @@ class BTagEventWeightFriend:
 
         # Automatically add the iterative systs from the reader
         self.btag_systs = ["central"]
-        self.btag_systs += ["up_%s"  %s for s in self.reader.iterative_systs]
-        self.btag_systs += ["down_%s"%s for s in self.reader.iterative_systs]
+        #self.btag_systs += ["up_%s"  %s for s in self.reader.iterative_systs]
+        #self.btag_systs += ["down_%s"%s for s in self.reader.iterative_systs]
 
         # Take only central, up_correlated, and down_correlated for fastsim
         if self.is_fastsim:
@@ -49,10 +49,11 @@ class BTagEventWeightFriend:
         self.jec_syst_to_use = {}
         for btag_syst in self.btag_systs:
             self.jec_syst_to_use[btag_syst] = ""
-        self.jec_syst_to_use["up_jes"] = "_jecUp"
-        self.jec_syst_to_use["down_jes"] = "_jecDown"
+        #####self.jec_syst_to_use["up_jes"] = "_jecUp"
+        #####self.jec_syst_to_use["down_jes"] = "_jecDown"
 
         self.branches = self.listBranches()
+        print self.branches
 
     def listBranches(self):
         out = []
@@ -69,7 +70,8 @@ class BTagEventWeightFriend:
         jets_disc = [j for j in Collection(event, "DiscJet"+jec_syst, "nDiscJet"+jec_syst)]
 
         try:
-            _ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
+            ######_ijets_list = getattr(event, "iJSel_%s%s" % (self.recllabel, jec_syst))
+            _ijets_list = getattr(event, "JetSel_id" )
             return [(jets[ij] if ij>=0 else jets_disc[-ij-1]) for ij in _ijets_list]
         except AttributeError:
             if not hasattr(self,'_debugprinted'): print 'Recleaned jets not found, falling back to default cleaned collection'
@@ -151,16 +153,24 @@ class BTagEventWeightFriend:
         if self.mcOnly and event.isData: return ret
 
         for syst in self.btag_systs:
+            print "doing this",syst
             jets = self.getJetCollection(event, jec_syst=self.jec_syst_to_use[syst])
 
             label = "%s_%s" % (self.label, syst)
             if syst == 'central': label = self.label
-
+            print "trying",label
             if not self.is_fastsim:
                 ret[label] = self.event_weight_from_discr_shape(jets, syst=syst)
+                print "this"
             else:
                 ret[label] = self.fastsim_event_weight(jets, syst=syst, wp='L')
+        print ret
         return ret
+
+
+
+
+
 
 if __name__ == '__main__':
     from sys import argv
