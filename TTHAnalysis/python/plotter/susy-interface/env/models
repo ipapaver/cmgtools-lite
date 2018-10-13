@@ -1,55 +1,84 @@
-BEGIN::TChiNeuWH
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWH.txt
+BEGIN::TChiWH
+  masspoints  := susy-interface/scan/masspoints/TChiWH.txt
   xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuWH_3l.root
-  q2accformat := sig_TChiNeuWH_[m1]_[m2]_Q2Acc_[var]
   brcorr      := 0.03634/1000.
 ENDDEF
 
-BEGIN::TChiNeuWZ
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWZ.txt
+BEGIN::TChiWZ
+  masspoints  := susy-interface/scan/masspoints/TChiWZ.txt
   xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuWZ_3l.root
-  q2accformat := sig_TChiNeuWZ_[m1]_[m2]_Q2Acc_[var]
   brcorr      := 0.10099/1000.
 ENDDEF
 
-BEGIN::TChiNeuWZ_SOS
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWZ_SOS.txt
+BEGIN::TChiSlepSnu_FD
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnux0p5.txt
   xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := 
-  q2accformat := 
-  brcorr      := 0.10099/1000.
-ENDDEF
-
-BEGIN::TChiNeuSlepSneu_FD
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneuFD.txt
-  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_FD_3l.root
-  q2accformat := sig_TChiNeuSlepSneu_FD_[m1]_[m2]_Q2Acc_[var]
   brcorr      := 0.5/1000.
 ENDDEF
 
-BEGIN::TChiNeuSlepSneu_05
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneu05.txt
+BEGIN::TChiSlepSnu_FD_05
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnux0p05.txt
   xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_05_3l.root
-  q2accformat := sig_TChiNeuSlepSneu_05_[m1]_[m2]_Q2Acc_[var]
   brcorr      := 0.5/1000.
 ENDDEF
 
-BEGIN::TChiNeuSlepSneu_TD
-  masspoints  := susy-interface/scan/masspoints/list_TChiNeuSlepSneuTD.txt
+BEGIN::TChiSlepSnu_FD_95
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnux0p95.txt
   xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
-  q2accfile   := susy-interface/scan/q2acc/q2acc_TChiNeuSlepSneu_TD_3l.root
-  q2accformat := sig_TChiNeuSlepSneu_TD_[m1]_[m2]_Q2Acc_[var]
+  brcorr      := 0.5/1000.
+ENDDEF
+
+BEGIN::TChiSlepSnu_TE
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnuTEx0p5.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
   brcorr      := 1.0/1000.
 ENDDEF
+
+BEGIN::TChiSlepSnu_TE_05
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnuTEx0p05.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  brcorr      := 1.0/1000.
+ENDDEF
+
+BEGIN::TChiSlepSnu_TE_95
+  masspoints  := susy-interface/scan/masspoints/TChiSlepSnuTEx0p95.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  brcorr      := 1.0/1000.
+ENDDEF
+
+BEGIN::TChiSlepSnu_TD
+  masspoints  := susy-interface/scan/masspoints/TChiStauStaux0p5_merged.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  brcorr      := 1.0/1000.
+ENDDEF
+
+BEGIN::TChiZZ4L
+  masspoints  := susy-interface/scan/masspoints/TChiZZ4L.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_NeuNeu.txt
+  brcorr      := 0.01/1000.
+ENDDEF
+
+BEGIN::TChiHZ
+  masspoints  := susy-interface/scan/masspoints/TChiHZ_physical.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_NeuNeu.txt
+  brcorr      := 0.0305/1000.
+ENDDEF
+
+BEGIN::TChiHH
+  masspoints  := susy-interface/scan/masspoints/TChiHH.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_NeuNeu.txt
+  brcorr      := 0.09/1000.
+ENDDEF
+
 
 BEGIN::T2tt_SOS
   masspoints  := susy-interface/scan/masspoints/list_T2ttDiLep.txt
   xsecfile    := susy-interface/scan/xsec/xsec_T2tt.txt
-  q2accfile   :=
-  q2accformat := 
   brcorr      := 0.105/1000.
+ENDDEF
+
+BEGIN::TChiWZ_SOS
+  masspoints  := susy-interface/scan/masspoints/list_TChiNeuWZ_SOS.txt
+  xsecfile    := susy-interface/scan/xsec/xsec_ChiNeu.txt
+  brcorr      := 0.10099/1000.
 ENDDEF
