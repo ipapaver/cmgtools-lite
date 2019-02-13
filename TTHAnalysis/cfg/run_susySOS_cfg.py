@@ -22,6 +22,7 @@ removeJetReCalibration = getHeppyOption("removeJetReCalibration",False)
 removeJecUncertainty = getHeppyOption("removeJecUncertainty",False)
 doMETpreprocessor = getHeppyOption("doMETpreprocessor",False)
 skipT1METCorr = getHeppyOption("skipT1METCorr",False)
+fixEE17 = getHeppyOption("fixMET2017EE", False)
 forcedSplitFactor = getHeppyOption("splitFactor",-1)
 forcedFineSplitFactor = getHeppyOption("fineSplitFactor",-1)
 isTest = getHeppyOption("test",None) != None and not re.match("^\d+$",getHeppyOption("test"))
@@ -37,6 +38,7 @@ sample = "main"
 ttHLepSkim.minLeptons = 2
 ttHLepSkim.maxLeptons = 999
 ttHJetMETSkim.metCut    = 50
+
 susyCoreSequence.append(ttHJetMETSkim)
 # susyCoreSequence.insert(susyCoreSequence.index(ttHLepSkim)+1,globalSkim)
 #     susyCoreSequence.remove(ttHLepSkim)
@@ -44,7 +46,7 @@ susyCoreSequence.append(ttHJetMETSkim)
 # #   [ lambda ev: 2<=sum([(lep.miniRelIso<0.4) for lep in ev.selectedLeptons]) ] 
 # #   ["2lep5[os:!DS_TTW_RA5_sync]_1lep50"]#, "1lep5_1tau18", "2tau18","2lep5_1met50"]
 
-
+if fixEE17: metAna.runFixMET2017EE = True
 # Run miniIso
 lepAna.doMiniIsolation = True if run80X else "precomputed"
 lepAna.packedCandidates = 'packedPFCandidates'
@@ -203,6 +205,12 @@ if not removeJecUncertainty:
 #            "discardedJets_jecDown" : NTupleCollection("DiscJet_jecDown", jetTypeSusySuperLight if analysis=='susy' else jetTypeSusyExtraLight, 15, help="Jets discarted in the jet-lepton cleaning (JEC -1sigma)"),
 #            })
 
+if fixEE17:
+     susyMultilepton_globalObjects.update({"metFixEE2017": NTupleObject("metFixEE2017", fourVectorType, help="MET with the Fix EE 2017 implemented")})
+ 
+
+
+
 ## Tree Producer
 treeProducer = cfg.Analyzer(
      AutoFillTreeProducer, name='treeProducerSusyMultilepton',
@@ -254,6 +262,7 @@ if not skipT1METCorr:
     metAnaScaleUp.recalibrate = "type1"
     jetAnaScaleDown.calculateType1METCorrection = True
     metAnaScaleDown.recalibrate = "type1"
+
 
 
 #ISR jet collection
@@ -315,12 +324,12 @@ if runSMS:
 #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
 #from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
-from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
+#from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 from CMGTools.RootTools.samples.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
-selectedComponents = [TTLep_pow]
-
+#selectedComponents = [TTLep_pow]
+#selectedComponents = samples
 #From samples_13TeV_signals
 #samples_scans = [SMS_TChiWZ, SMS_T2ttDiLep_mStop_10to80] 
 #samples_higgsinos = [SMS_N2C1_Higgsino,SMS_N2N1_Higgsino] 
@@ -333,19 +342,19 @@ selectedComponents = [TTLep_pow]
 #samples_rareBkg = [WZTo3LNu, WWToLNuQQ, WZTo1L3Nu, WZTo1L1Nu2Q, ZZTo2L2Q, ZZTo4L, WWW, WZZ, WWZ, ZZZ, T_tch_powheg, TBar_tch_powheg, TToLeptons_sch_amcatnlo, WWDouble, WpWpJJ, TTWToLNu_ext, TTZToLLNuNu_ext, TTZToLLNuNu_m1to10, TTGJets, WGToLNuG_amcatnlo_ext, ZGTo2LG_ext, TGJets] #WZTo2L2Q,WGToLNuG, #still missing
 
 #From samples_13TeV_RunIIFall17MiniAOD (some samples still missing)
-samples_mainBkg =  [T_tWch_noFullyHad, TBar_tWch_noFullyHad] + DYJetsToLLM4to50HT + DYJetsToLLM50HT + [TTJets_DiLepton] #TTJets_DiLepton not yet finished
-samples_mainBkgVV = [WWTo2L2Nu,ZZTo2L2Nu] #[VVTo2L2Nu, VVTo2L2Nu_ext]
-samples_fakesBkg = [TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar] + WJetsToLNuHT 
-samples_rareBkg = [WZTo3LNu_fxfx, WWToLNuQQ, WZTo1L1Nu2Q, ZZTo4L, WWW_4F, WZZ, WWZ_4F, ZZZ, T_tch, TBar_tch, T_sch_lep, WWTo2L2Nu_DPS_hpp, TTWToLNu_fxfx, TTZToLLNuNu_amc, TTZToLLNuNu_m1to10, TTGJets, TGJets_lep] #WZTo3LNu, WZTo1L3Nu, , ZZTo2L2Q, WpWpJJ,  WGToLNuG_amcatnlo_ext, ZGTo2LG_ext, WZTo2L2Q,WGToLNuG, #still missing
+#samples_mainBkg =  [T_tWch_noFullyHad, TBar_tWch_noFullyHad] + DYJetsToLLM4to50HT + DYJetsToLLM50HT + [TTJets_DiLepton] #TTJets_DiLepton not yet finished
+#samples_mainBkgVV = [WWTo2L2Nu,ZZTo2L2Nu] #[VVTo2L2Nu, VVTo2L2Nu_ext]
+#samples_fakesBkg = [TTJets_SingleLeptonFromT, TTJets_SingleLeptonFromTbar] + WJetsToLNuHT 
+#samples_rareBkg = [WZTo3LNu_fxfx, WWToLNuQQ, WZTo1L1Nu2Q, ZZTo4L, WWW_4F, WZZ, WWZ_4F, ZZZ, T_tch, TBar_tch, T_sch_lep, WWTo2L2Nu_DPS_hpp, TTWToLNu_fxfx, TTZToLLNuNu_amc, TTZToLLNuNu_m1to10, TTGJets, TGJets_lep] #WZTo3LNu, WZTo1L3Nu, , ZZTo2L2Q, WpWpJJ,  WGToLNuG_amcatnlo_ext, ZGTo2LG_ext, WZTo2L2Q,WGToLNuG, #still missing
 
-samples_mainBkg = [DYJetsToLL_M5to50_LO]#DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,DYJetsToLL_M10to50_LO]
+samples_mainBkg = samples#[DYJets]#DYJetsToLL_M50_LO,DYJetsToLL_M50_LO_ext,DYJetsToLL_M10to50_LO]
 
-cropToLumi([WWW_4F, WZZ, WWZ_4F, ZZZ, WWToLNuQQ, WZTo1L1Nu2Q, TTWToLNu_fxfx, TTZToLLNuNu_amc, TTZToLLNuNu_m1to10],200)
-configureSplittingFromTime(samples_fakesBkg,50,3)
+#cropToLumi([WWW_4F, WZZ, WWZ_4F, ZZZ, WWToLNuQQ, WZTo1L1Nu2Q, TTWToLNu_fxfx, TTZToLLNuNu_amc, TTZToLLNuNu_m1to10],200)
+#configureSplittingFromTime(samples_fakesBkg,50,3)
 configureSplittingFromTime(samples_mainBkg,50,3)
-configureSplittingFromTime(samples_rareBkg,100,3)
+#configureSplittingFromTime(samples_rareBkg,100,3)
 
-selectedComponents = WJetsToLNuHT#samples_mainBkg#samples_fakesBkg#samples_rareBkg + samples_mainBkg + samples_mainBkgVV
+selectedComponents = samples_mainBkg#samples_mainBkg#samples_fakesBkg#samples_rareBkg + samples_mainBkg + samples_mainBkgVV
 #selectedComponents = WJetsToLNuHT
 
 if scaleProdToLumi>0: # select only a subset of a sample, corresponding to a given luminosity (assuming ~30k events per MiniAOD file, which is ok for central production)
