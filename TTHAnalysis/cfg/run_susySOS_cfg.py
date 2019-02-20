@@ -206,7 +206,7 @@ if not removeJecUncertainty:
 #            })
 
 if fixEE17:
-     susyMultilepton_globalObjects.update({"metFixEE2017": NTupleObject("metFixEE2017", metType, help="MET with the Fix EE 2017 implemented")})
+     susyMultilepton_globalObjects.update({"metFixEE2017": NTupleObject("metFixEE2017", fourVectorType, help="MET with the Fix EE 2017 implemented")})
  
 
 
@@ -324,7 +324,7 @@ if runSMS:
 #from CMGTools.RootTools.samples.samples_13TeV_80X_susySignalsPriv import *
 #from CMGTools.RootTools.samples.samples_13TeV_DATA2016 import *
 from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17MiniAOD import *
-#from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
+from CMGTools.RootTools.samples.samples_13TeV_DATA2017 import *
 from CMGTools.RootTools.samples.configTools import printSummary, configureSplittingFromTime, cropToLumi, prescaleComponents, insertEventSelector, mergeExtensions
 from CMGTools.RootTools.samples.autoAAAconfig import *
 
