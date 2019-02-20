@@ -206,7 +206,7 @@ if not removeJecUncertainty:
 #            })
 
 if fixEE17:
-     susyMultilepton_globalObjects.update({"metFixEE2017": NTupleObject("metFixEE2017", fourVectorType, help="MET with the Fix EE 2017 implemented")})
+     susyMultilepton_globalObjects.update({"metFixEE2017": NTupleObject("metFixEE2017", metType, help="MET with the Fix EE 2017 implemented")})
  
 
 
