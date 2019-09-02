@@ -22,6 +22,7 @@ dowhat = "plots"
 #P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/"
 #P0="/eos/home-v/vtavolar/SusySOS/"
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_170619_v5pre/"
+#P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_230819_v5/"
 #if 'cmsco01'   in os.environ['HOSTNAME']: P0="/data1/peruzzi"
 nCores = 8
 if 'fanae' in os.environ['HOSTNAME']: 
@@ -32,17 +33,17 @@ TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH   --Fs {P}/recleaner"
 ##TREESALL = "--xf THQ_LHE,THW_LHE,TTWW,TTTW,TTWH  --Fs {P}/1_lepJetBTagDeepFlav_v1  --Fs {P}/2_triggerSequence_v2 --Fs {P}/3_recleaner_v1 --FMCs {P}/4_btag --FMCs {P}/4_leptonSFs_v0 --FMCs {P}/0_mcFlags_v0" 
 ##TREESONLYFULL = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 ###TREESONLYFULL = "-P "+P0+"/NanoTrees_SOS_170619_v5pre/%s "%(YEAR,)
-TREESONLYFULL = "-P "+P0+"/nanoaods/%s "%(YEAR,)
+TREESONLYFULL = "-P "+P0+"/%s "%(YEAR,)
 ##TREESONLYSKIM = "-P "+P0+"/NanoTrees_TTH_300519_v5pre_skim2LSS/%s "%(YEAR,)
-TREESONLYSKIM = "-P "+P0+"/nanoaods/%s "%(YEAR,)
+TREESONLYSKIM = "-P "+P0+"%s "%(YEAR,)
 #TREESONLYMEMZVETO = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 #TREESONLYMEMZPEAK = "-P "+P0+"/NanoTrees_TTH_300519_v5pre/%s "%(YEAR,)
 
 def base(selection):
 
     CORE=' '.join([TREESALL,TREESONLYSKIM])
-    CORE+=" -f -j %d -l %s --s2v -L susy-sos-v2-clean/functionsSOS.cc --tree NanoAOD --mcc ttH-multilepton/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s "%(nCores, lumis[YEAR],YEAR)# --neg"
-    if YEAR == 2017: CORE += " --mcc ttH-multilepton/mcc-METFixEE2017.txt"
+    CORE+=" -f -j %d -l %s --s2v -L susy-sos-v2-clean/functionsSOS.cc  -L susy-sos-v2-clean/functionsSF.cc --tree NanoAOD --mcc susy-sos-v2-clean/lepchoice-ttH-FO.txt --split-factor=-1 --WA prescaleFromSkim --year %s "%(nCores, lumis[YEAR],YEAR)# --neg"
+    if YEAR == "2017": CORE += " --mcc ttH-multilepton/mcc-METFixEE2017.txt"
     RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
     RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
     LEGEND=" --legendColumns 2 --legendWidth 0.25 "
@@ -52,13 +53,13 @@ def base(selection):
 
     if selection=='2los':
         GO="%s susy-sos-v2-clean/mca-2los-mc.txt susy-sos-v2-clean/2los_tight.txt "%CORE
-        GO="%s -W 'puWeight'"%GO#        GO="%s -W 'puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss'"%GO
+        GO="%s -W 'puWeight*getLepSF(LepGood_pt[iLepFO_Recl[0] ], LepGood_eta[iLepFO_Recl[0] ], LepGood_pdgId[iLepFO_Recl[0] ]) * getLepSF(LepGood_pt[iLepFO_Recl[1] ], LepGood_eta[iLepFO_Recl[1] ], LepGood_pdgId[iLepFO_Recl[1] ]) * triggerSFfullsim(LepGood_pt[iLepFO_Recl[0] ], LepGood_eta[iLepFO_Recl[0] ], LepGood_pt[iLepFO_Recl[1] ], LepGood_eta[iLepFO_Recl[1] ], MET_pt, metmm_pt(LepGood_pdgId[iLepFO_Recl[0] ], LepGood_pt[iLepFO_Recl[0] ], LepGood_phi[iLepFO_Recl[0] ], LepGood_pdgId[iLepFO_Recl[1] ], LepGood_pt[iLepFO_Recl[1] ],LepGood_phi[iLepFO_Recl[1] ], MET_pt, MET_phi))'"%GO#        GO="%s -W 'puWeight*btagSF_shape*leptonSF_2lss*triggerSF_2lss'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" susy-sos-v2-clean/2lss_3l_plots.txt --xP '^lep(3|4)_.*' --xP '^(3|4)lep_.*' --xP 'kinMVA_3l_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
         if dowhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 ")
         GO += " --binname 2los "
     elif selection=='3l':
-        GO="%s ttH-multilepton/mca-3l-mc.txt ttH-multilepton/3l_tight.txt "%CORE
+        GO="%s susy-sos-v2-clean/mca-3l-mc.txt susy-sos-v2-clean/3l_cuts.txt "%CORE
         GO="%s -W 'puWeight*btagSF_shape*leptonSF_3l*triggerSF_3l'"%GO
         if dowhat in ["plots","ntuple"]: GO+=" ttH-multilepton/2lss_3l_plots.txt --xP '^(2|4)lep_.*' --xP '^lep4_.*' --xP 'kinMVA_2lss_.*' "
         if dowhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.42 ")
@@ -151,7 +152,11 @@ if __name__ == '__main__':
             x = add(x,"--sp '.*' --scaleSigToData")
 #        x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
 ##        x = add(x,"-E ^pt5sublep -E ^met125_met -E ^met125_mumu -E ^met125_trig")
-        x = add(x,"-E ^pt5sublep -E ^met125_met -E ^met125_mumu")
+#        x = add(x,"-E ^pt5sublep -E ^met125_met -E ^met125_mumu")
+        if YEAR=="2016":
+            x = add(x,"-E ^pt5sublep -E ^met125_met -E ^met125_mumu -E ^met125_trig_2016")
+        else:
+            x = add(x,"-E ^pt5sublep -E ^met125_met -E ^met125_mumu -E ^met125_trig")
         if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
         else: x = add(x,"-E ^1B ")
         if '_unc' in torun:
@@ -234,6 +239,11 @@ if __name__ == '__main__':
 
     if '3l_' in torun:
         x = base('3l')
+        if '_SRMC' in torun:
+            if 'LowMET' in torun:
+                x = add(x, "-E met125 -E mml -E met125_trig")
+            if 'HighMET' in torun:
+                x = add(x, "-E met200 -E met200_trig")
         if '_appl' in torun: x = add(x,'-I ^TTT ')
         if '_1fo' in torun:
             x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight+LepGood3_isLepTight==2'")
@@ -337,13 +347,15 @@ if __name__ == '__main__':
         x = base('2lss')
         x = fulltrees(x) # for mc same-sign
         x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata-ttbar.txt')
+        x = x.replace('2los_tight.txt','2los_tight_crtt.txt')
         if '_data' not in torun: x = add(x,'--xp data')
         if '_appl' in torun: x = add(x,'-I ^TT ')
         if '_1fo' in torun: x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight==1'")
         if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25'")
         if '_norm' in torun:
             x = add(x,"--sp '.*' --scaleSigToData")
-        x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
+        #x = add(x,"-I same-sign -X ^4j -X ^2b1B -E ^2j -E ^em ")
+        x = add(x,"-E mtautau -E ledlepPt -E ^pt5sublep -E ^met125_met -E ^met125_mumu")
         if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
         else: x = add(x,"-E ^1B ")
         if '_unc' in torun:

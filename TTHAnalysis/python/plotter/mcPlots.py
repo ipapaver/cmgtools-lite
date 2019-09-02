@@ -798,8 +798,11 @@ class PlotMaker:
                 if mytotal != None:
                     total = mytotal
                 else:
-                    hists = [v for k,v in pmap.iteritems() if k != 'data'  and v.Integral() > 0 ]
+                    
+                    hists = [v for k,v in pmap.iteritems() if k != 'data'  and v.Integral() > 0 ]                    
                     if not hists: hists = [v for k,v in pmap.iteritems() if k != 'data' ]
+                    #print(hists)
+                    print(pmap)
                     total = hists[0].Clone(outputName+"_total"); total.Reset()
                 if plotmode == "norm": 
                     if 'data' in pmap:
@@ -1204,6 +1207,7 @@ if __name__ == "__main__":
     parser.add_option("-o", "--out", dest="out", default=None, help="Output file name. by default equal to plots -'.txt' +'.root'");
     (options, args) = parser.parse_args()
     mca  = MCAnalysis(args[0],options)
+    print(mca, options)
     cuts = CutsFile(args[1],options)
     plots = PlotFile(args[2],options)
     outname  = options.out if options.out else (args[2].replace(".txt","")+".root")

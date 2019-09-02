@@ -58,7 +58,7 @@ class MCAnalysis:
             for k in fro.split(","):
                 self._premap.append((re.compile(k.strip()+"$"), to))
         self.variationsFile = UncertaintyFile(options.variationsFile,options) if options.variationsFile else None
-        if os.path.isfile(samples): 
+        if os.path.isfile(samples):
             self.readMca(open(samples,'r'),options)
         elif os.path.isdir(samples) and options.tree == "NanoAOD":
             options.path = [ samples ]
@@ -262,7 +262,7 @@ class MCAnalysis:
                     rootfiles = [ rootfile ]
                 
                 for rootfile in rootfiles:
-                    mycname = cname if len(rootfiles) == 1 else cname + "-" + os.path.basename(rootfile).replace(".root","") 
+                    mycname = cname if len(rootfiles) == 1 else cname + "-" + os.path.basename(rootfile).replace(".root","")
                     tty = TreeToYield(rootfile, basepath, options, settings=extra, name=pname, cname=mycname, objname=objname, variation_inputs=variations.values(), nanoAOD=(treename == "NanoAOD")); 
                     tty.pckfile = pckfile
                     ttys.append(tty)
@@ -824,10 +824,11 @@ class MCAnalysis:
                     newtasks.append( tuple( (list(task)[:-1]) + [fsplit] ) )
         else:
             self.prepareForSplit() 
-            #print "Original task list has %d entries; split factor %d." % (len(tasks), nsplit)
+            print "Original task list has %d entries; split factor %d." % (len(tasks), nsplit)
+            #print(tasks[0])
             maxent = max( task[1].getEntries() for task in tasks )
             grain  = maxent / nsplit # may be optimized
-            #print "Largest task has %d entries. Will use %d as grain " % (maxent, grain)
+            print "Largest task has %d entries. Will use %d as grain " % (maxent, grain)
             if grain < 10000: grain = 10000 # avoid splitting too finely
             newtasks_wsize = []
             if self._options.splitSort:

@@ -1,3 +1,3 @@
-incl_sigprompt : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-sigprompt.txt"
-incl_convs     : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-convs.txt"
-incl_mcfakes   : + ; IncludeMca="ttH-multilepton/mca-includes/mca-3l-mcfakes.txt"
+incl_sigprompt : + ; IncludeMca="susy-sos-v2-clean/mca-includes/mca-3l-sigprompt.txt"
+incl_convs     : + ; IncludeMca="susy-sos-v2-clean/mca-includes/mca-3l-convs.txt"
+incl_mcfakes   : + ; IncludeMca="susy-sos-v2-clean/mca-includes/mca-3l-mcfakes.txt"
