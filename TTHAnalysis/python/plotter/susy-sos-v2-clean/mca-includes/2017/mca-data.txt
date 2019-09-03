@@ -1,0 +1,11 @@
+### 2017
+data : DoubleMuon_Run2017B_1June2019     ; years="2017"
+data : DoubleMuon_Run2017C_1June2019     ; years="2017"
+data : DoubleMuon_Run2017D_1June2019     ; years="2017"
+data : DoubleMuon_Run2017E_1June2019     ; years="2017"
+data : DoubleMuon_Run2017F_1June2019     ; years="2017"
+data : MET_Run2017B_1June2019    ; years="2017"
+data : MET_Run2017C_1June2019    ; years="2017"
+data : MET_Run2017D_1June2019    ; years="2017"
+data : MET_Run2017E_1June2019    ; years="2017"
+data : MET_Run2017F_1June2019    ; years="2017"

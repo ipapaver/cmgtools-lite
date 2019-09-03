@@ -1,0 +1,19 @@
+### VV
+#prompt_vv       : WJetsToLNu_HT70to100         : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT100to200         : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT200to400         : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT400to600         : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT600to800         : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT800to1200        : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT1200to2500       : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WJetsToLNu_HT2500toInf        : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+
+#prompt_vv      : WZTo2L2Q                      : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WZTo3LNu_fxfx                 : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WWTo2L2Nu                     : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV
+prompt_vv       : ZZTo2L2Nu                     : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+#prompt_vv      : VHToNonbb                     : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+#prompt_vv      : ZZTo2L2Q                      : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : ZZTo4L                        : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WWTo2L2Nu             : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"
+prompt_vv       : WpWpJJ                        : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kViolet-4, Label="VV"

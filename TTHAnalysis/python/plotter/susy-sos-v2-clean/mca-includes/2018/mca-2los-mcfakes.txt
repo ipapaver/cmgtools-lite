@@ -1,0 +1,21 @@
+### Fakes
+#Fakes           : WJetsToLNu_HT70to100         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"# FAKES
+Fakes           : WJetsToLNu_HT100to200         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT200to400         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT400to600         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT600to800         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT800to1200        : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT1200to2500       : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+Fakes           : WJetsToLNu_HT2500toInf        : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray, Label="Wj(fakes)"
+
+Fakes           : TTJets_DiLepton               : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+1, Label="tt(fakes)"
+Fakes           : TTJets_SingleLeptonFromTbar   : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+1, Label="tt(fakes)"
+Fakes           : TTJets_SingleLeptonFromT      : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+1, Label="tt(fakes)"
+
+Fakes           : T_sch_lep                     : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+2, Label="t(fakes)
+Fakes           : T_tch                         : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+2, Label="t(fakes)"
+Fakes           : TBar_tch                      : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+2, Label="t(fakes)"
+
+#Fakes          : WZTo1L3Nu                     : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+3, Label="VV(fakes)"
+#Fakes           : WZTo1L1Nu2Q                   : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+3, Label="VV(fakes)"
+Fakes           : WWToLNuQQ                     : xsec  : LepGood1_mcMatchId==0 || LepGood2_mcMatchId==0        ;  FillColor=ROOT.kGray+2, Label="VV(fakes)"

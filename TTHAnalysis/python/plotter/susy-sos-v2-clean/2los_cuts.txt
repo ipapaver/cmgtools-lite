@@ -1,0 +1,160 @@
+##### Always applied cuts
+alwaystrue	: 1
+
+filtersAll	: ( year==2016 && $DATA{EventFilters16} && 0 ) || ( year==2017 && $DATA{EventFilters17} ) || ( year==2018 && $DATA{EventFilters18} && 0 )
+
+dilep		: nLepGood == 2
+sublepPt	: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 3.5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
+
+mll		: m2l > 4 && m2l < 50
+upsilonVeto	: m2l < 9 || m2l > 10.5
+dilepPt		: pt_2(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi) > 3 
+
+ISRjet		: Jet1_jetId >= 4
+METoverHT	: (MET_pt/(htJet25j_Recl-LepGood1_pt-LepGood2_pt))>(2/3) && (MET_pt/(htJet25j_Recl-LepGood1_pt-LepGood2_pt)) < 1.4
+minHT		: (htJet25j_Recl-LepGood1_pt-LepGood2_pt) > 100
+
+
+##### Triggers and Binning
+### Low MET
+met125		: MET_pt > 125 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 125 && MET_pt < 200 && abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13	; Disable=True 
+met125_trig	: ( year==2016 && HLT_MuMuMET16 ) || ( year==2017 && HLT_MuMuMET17 ) || ( year==2018 && HLT_MuMuMET18 )	; Disable=True
+xpRun2017B	: !(run < 299330)	; Disable=True
+### Med MET	
+met200		: MET_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 && MET_pt < 250	; Disable=True
+met200_col	: MET_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 && MET_pt < 300	; Disable=True
+met200_CR	: MET_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200	; Disable=True
+met200_trig	: ( year==2016 && HLT_HighMET16 ) || ( (year==2017 || year==2018) && HLT_HighMET )	; Disable=True
+### High MET
+met250		: MET_pt > 250 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 250	; Disable=True
+met300_col	: MET_pt > 300 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 300	; Disable=True
+met250_trig	: ( year==2016 && HLT_HighMET16 ) || ( (year==2017 || year==2018) && HLT_HighMET )	; Disable=True
+
+
+##### SR (enabled by default but likely to be inverted cuts)
+OS		: LepGood1_pdgId*LepGood2_pdgId<0
+ledlepPt	: 5.0 < LepGood1_pt && LepGood1_pt < 30.0
+twoTight	: LepGood1_isLepTight && LepGood2_isLepTight
+bveto		: nBJetLoose25 == 0
+mtautau		: 0.0 > mass_tautau(MET_pt,MET_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi) || mass_tautau(MET_pt,MET_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi) > 160.0
+### EWK
+mT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) < 70. && mt_2(LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) < 70.0
+SF		: abs(LepGood1_pdgId*LepGood2_pdgId)==169 || abs(LepGood1_pdgId*LepGood2_pdgId)==121
+### EWK OR Low MET
+pt5sublep	: (fabs(LepGood2_pdgId)==13 && LepGood2_pt > 5) || (fabs(LepGood2_pdgId)==11 && LepGood2_pt > 5)
+
+
+##### DY CR
+### Disable ledlepPt, twoTight
+### Invert mtautau
+CRDYlepId	: LepGood1_isDY && LepGood2_isDY	; Disable=True
+CRDYledlepPtIp	: 20.0 < LepGood1_pt || fabs(LepGood1_ip3d) > 0.01 || fabs(LepGood1_sip3d) > 2 || fabs(LepGood2_ip3d) > 0.01 || fabs(LepGood2_sip3d) > 2	; Disable=True
+
+
+##### TT CR
+### Disable ledlepPt, twoTight, bveto, mT
+CRTTlepId	: LepGood1_isTT && LepGood2_isTT	; Disable=True
+CRTTledlepPt	: 5.0 < LepGood1_pt	; Disable=True
+btag		: nBJetLoose40 > 0	; Disable=True
+
+
+##### WW CR
+### Disable leplepPt, mT
+CRWWlepId	: LepGood1_isTT && LepGood2_isTT	; Disable=True # Same as the TT
+CRWWleplepPt	: 20.0 < LepGood1_pt	; Disable=True
+CRWWmT		: mt_2(LepGood1_pt, LepGood1_phi, MET_pt, MET_phi) > 70. || mt_2(LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 90.0	; Disable=True
+
+
+##### SS CR
+### Disable pt5sublep, mT
+### Invert OS
+
+
+##### Misc
+#sideband    : 1
+
+#oneNotTight : !(LepGood1_isTightString) || !(LepGood2_isTightString)                                                             ; Disable=True
+#oneLNT      : (!(LepGood1_isTightString) && (LepGood2_isTightString)) || ((LepGood1_isTightString) && !(LepGood2_isTightString)) ; Disable=True
+#twoLNT      : !(LepGood1_isTightString) && !(LepGood2_isTightString)                                                             ; Disable=True
+#oneNotTight : !(LepGood1_isLepTight_Recl) || !(LepGood2_isLepTight_Recl)                                                             ; Disable=True
+#oneLNT      : (!(LepGood1_isLepTight_Recl) && (LepGood2_isLepTight_Recl)) || ((LepGood1_isLepTight_Recl) && !(LepGood2_isLepTight_Recl)) ; Disable=True
+#twoLNT      : !(LepGood1_isLepTight_Recl) && !(LepGood2_isLepTight_Recl)                                                             ; Disable=True
+
+
+## to activate: SS
+#SS          : LepGood1_pdgId*LepGood2_pdgId>0                                                                              ; Disable=True
+
+## to activate: medium MET STOP
+#col200_met1 : MET_pt > 200 && metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi) > 200 ; Disable=True
+#col200_met2 : MET_pt < 300                                                                                                 ; Disable=True
+#col200_trig : $FASTSIM{1} $DATA{HLT_HighMET16} $MC{HLT_HighMET16}                                                          ; Disable=True
+
+#met125_trig_2016:	HLT_DoubleMu3_PFMET50;															Disable=True
+#met125_trig:		HLT_DoubleMu3_DZ_PFMET50_PFMHT60;													Disable=True
+#met125_trig_2016:	$FASTSIM{1} $DATA{HLT_MuMuMET16} $MC{HLT_MuMuMET16};											Disable=True
+#met125_trig:		$FASTSIM{1} $DATA{HLT_MuMuMET} $MC{HLT_MuMuMET};											Disable=True
+#met200_trig_2016:	$FASTSIM{1} $DATA{HLT_HighMET16} $MC{HLT_HighMET16};											Disable=True
+#met200_trig:		$FASTSIM{1} $DATA{HLT_HighMET} $MC{HLT_HighMET};											Disable=True
+#met250_trig_2016:	$FASTSIM{1} $DATA{HLT_HighMET16} $MC{HLT_HighMET16};											Disable=True
+#met250_trig:		$FASTSIM{1} $DATA{HLT_HighMET} $MC{HLT_HighMET};											Disable=True
+
+##########
+#
+#alwaystrue: 1
+#trigger: Trigger_2lss
+#cleanup: minMllAFAS > 12
+#dilep: nLepFO>=2
+#pt2515: LepGood1_conePt>25 && LepGood2_conePt>15
+##htllv100 : LepGood1_conept+LepGood2_conept+MET_pt > 100
+#TT: LepGood1_isLepTight && LepGood2_isLepTight
+#exclusive: nLepTight<=2
+#same-sign: LepGood1_charge*LepGood2_charge > 0
+#Zee_veto: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || abs(mass_2(LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_pt,LepGood2_eta,LepGood2_phi,LepGood2_mass)-91.2) > 10
+#metLDee: abs(LepGood1_pdgId)!=11 || abs(LepGood2_pdgId) != 11 || MET_pt*0.6 + mhtJet25*0.4 > 30
+#
+#eleID: (abs(LepGood1_pdgId)!=11 || (LepGood1_convVeto && LepGood1_lostHits==0 && LepGood1_tightCharge>=2)) && (abs(LepGood2_pdgId)!=11 || (LepGood2_convVeto && LepGood2_lostHits==0 && LepGood2_tightCharge>=2))
+#muTightCharge: (abs(LepGood1_pdgId)!=13 || LepGood1_tightCharge>=1) && (abs(LepGood2_pdgId)!=13 || LepGood2_tightCharge>=1)
+#
+#4j: nJet25>=4
+#2b1B: nBJetLoose25 >= 2 || nBJetMedium25 >= 1
+#
+#tauveto: nTauTight==0
+#
+## some cuts that are off by default but can be turned on with -E
+#tightMVA070: LepGood1_mvaTTH>0.70 && LepGood2_mvaTTH>0.70 ; Disable=True
+#tightMVA075: LepGood1_mvaTTH>0.75 && LepGood2_mvaTTH>0.75 ; Disable=True
+#tightMVA080: LepGood1_mvaTTH>0.80 && LepGood2_mvaTTH>0.80 ; Disable=True
+#tightMVA085: LepGood1_mvaTTH>0.85 && LepGood2_mvaTTH>0.85 ; Disable=True
+#tightMVA090: LepGood1_mvaTTH>0.90 && LepGood2_mvaTTH>0.90 ; Disable=True
+#tightMVA095: LepGood1_mvaTTH>0.95 && LepGood2_mvaTTH>0.95 ; Disable=True
+#1B: nBJetMedium25 >= 1 ; Disable=True
+#2B: nBJetMedium25 >= 2 ; Disable=True
+#BLoose: nBJetMedium25 < 2 ; Disable=True
+#BTight: nBJetMedium25 >= 2 ; Disable=True
+#2j: nJet25>=2 ; Disable=True
+#x3j: nJet25==3 ; Disable=True
+#6j: nJet25>=6 ; Disable=True
+#
+#ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11; Disable=True
+#em: abs(LepGood1_pdgId) != abs(LepGood2_pdgId);         Disable=True
+#mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13; Disable=True
+#mll200: mass_2(LepGood1_conePt,LepGood1_eta,LepGood1_phi,LepGood1_mass,LepGood2_conePt,LepGood2_eta,LepGood2_phi,LepGood2_mass)>200; Disable=True
+#b2lss_ee: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 ; Disable=True
+#b2lss_ee_neg: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge<0 ; Disable=True
+#b2lss_ee_pos: abs(LepGood1_pdgId)==11 && abs(LepGood2_pdgId)==11 && LepGood1_charge>0 ; Disable=True
+#b2lss_em: (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) ; Disable=True
+#b2lss_em_bl_neg: (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
+#b2lss_em_bl_pos: (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
+#b2lss_em_bt_neg: (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
+#b2lss_em_bt_pos: (abs(LepGood1_pdgId) != abs(LepGood2_pdgId)) && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
+#b2lss_mm: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 ; Disable=True
+#b2lss_mm_bl_neg: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 < 2 ; Disable=True
+#b2lss_mm_bl_pos: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 < 2 ; Disable=True
+#b2lss_mm_bt_neg: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge<0 && nBJetMedium25 >= 2 ; Disable=True
+#b2lss_mm_bt_pos: abs(LepGood1_pdgId)==13 && abs(LepGood2_pdgId)==13 && LepGood1_charge>0 && nBJetMedium25 >= 2 ; Disable=True
+#b2lss_bl: nBJetMedium25 < 2 ; Disable=True
+#b2lss_bt: nBJetMedium25 >= 2 ; Disable=True
+#2lep_promptrightcharge: (!isData) && LepGood1_isMatchRightCharge && LepGood2_isMatchRightCharge; Disable=True
+#fakeIsMu : if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,(abs(LepGood2_pdgId)==13),(abs(LepGood1_pdgId)==13)),0); Disable=True
+#fakeIsEl : if3((nLepFO>1)*(LepGood1_isLepTight+LepGood2_isLepTight==1),if3(LepGood1_isLepTight,(abs(LepGood2_pdgId)==11),(abs(LepGood1_pdgId)==11)),0); Disable=True
+#muChargeConsistencyThree: (abs(LepGood1_pdgId)!=13 || LepGood1_chargeConsistency>=3) && (abs(LepGood2_pdgId)!=13 || LepGood2_chargeConsistency>=3); Disable=True
