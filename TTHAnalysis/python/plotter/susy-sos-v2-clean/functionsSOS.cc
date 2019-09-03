@@ -188,12 +188,12 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
   // nlep is ignored for the loose selection
 
   if (!_histo_recoToLoose_leptonSF_mu1_lt30) {
-    _file_recoToLoose_leptonSF_mu1_lt30 = new TFile("../../data/leptonSF/mu_scaleFactors_ptLt30.root","read");
-    _file_recoToLoose_leptonSF_mu1_gt30 = new TFile("../../data/leptonSF/mu_scaleFactors_ptGt30.root","read");
-    _file_recoToLoose_leptonSF_mu2 = new TFile("../../data/leptonSF/scaleFactors_mu_DxyDzSip8mIso04_over_LooseID.root","read");
+    _file_recoToLoose_leptonSF_mu1_lt30 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/mu_scaleFactors_ptLt30.root","read");
+    _file_recoToLoose_leptonSF_mu1_gt30 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/mu_scaleFactors_ptGt30.root","read");
+    _file_recoToLoose_leptonSF_mu2 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/scaleFactors_mu_DxyDzSip8mIso04_over_LooseID.root","read");
     //    _file_recoToLoose_leptonSF_mu3 = new TFile("../../data/leptonSF/TnP_NUM_TightIP2D_DENOM_MediumID_VAR_map_pt_eta.root","read");
-    _file_recoToLoose_leptonSF_mu4_lt10 = new TFile("../../data/leptonSF/mu_scaleFactors_trkEff_ptLt10.root","read");
-    _file_recoToLoose_leptonSF_mu4_gt10 = new TFile("../../data/leptonSF/mu_scaleFactors_trkEff_ptGt10.root","read");
+    _file_recoToLoose_leptonSF_mu4_lt10 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/mu_scaleFactors_trkEff_ptLt10.root","read");
+    _file_recoToLoose_leptonSF_mu4_gt10 = new TFile("../../OLD_sos_lepton_SF/data/leptonSF/mu_scaleFactors_trkEff_ptGt10.root","read");
     _histo_recoToLoose_leptonSF_mu1_lt30 = (TH2F*)(_file_recoToLoose_leptonSF_mu1_lt30->Get("NUM_LooseID_DEN_genTracks_pt_abseta"));
     _histo_recoToLoose_leptonSF_mu1_gt30 = (TH2F*)(_file_recoToLoose_leptonSF_mu1_gt30->Get("NUM_LooseID_DEN_genTracks_pt_abseta"));
     _histo_recoToLoose_leptonSF_mu2 = (TH2F*)(_file_recoToLoose_leptonSF_mu2->Get("NUM_ttHLoo_DEN_LooseID"));
@@ -202,15 +202,15 @@ float _get_recoToLoose_leptonSF_ttH(int pdgid, float pt, float eta, int nlep, fl
     _histo_recoToLoose_leptonSF_mu4_gt10 = (TGraphAsymmErrors*)(_file_recoToLoose_leptonSF_mu4_gt10->Get("ratio_eff_eta3_dr030e030_corr"));
   }
   if (!_histo_recoToLoose_leptonSF_el1) {
-    _file_recoToLoose_leptonSF_el = new TFile("../../data/leptonSF/egammaEffi.txt_EGM2D_looseTTH_2017.root","read");
+    _file_recoToLoose_leptonSF_el = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/egammaEffi.txt_EGM2D_looseTTH_2017.root","read");
     _histo_recoToLoose_leptonSF_el1 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("EGamma_SF2D"));
 //    _histo_recoToLoose_leptonSF_el2 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToMini4"));
 //    _histo_recoToLoose_leptonSF_el3 = (TH2F*)(_file_recoToLoose_leptonSF_el->Get("MVAVLooseElectronToConvVetoIHit1"));
   }
   if (!_histo_recoToLoose_leptonSF_gsf_lt20) {
-    _file_recoToLoose_leptonSF_gsf_lt20 = new TFile("../../data/leptonSF/el_scaleFactors_gsf_ptLt20.root","read");
+    _file_recoToLoose_leptonSF_gsf_lt20 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/el_scaleFactors_gsf_ptLt20.root","read");
     _histo_recoToLoose_leptonSF_gsf_lt20 = (TH2F*)(_file_recoToLoose_leptonSF_gsf_lt20->Get("EGamma_SF2D"));
-    _file_recoToLoose_leptonSF_gsf_gt20 = new TFile("../../data/leptonSF/el_scaleFactors_gsf_ptGt20.root","read");
+    _file_recoToLoose_leptonSF_gsf_gt20 = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/el_scaleFactors_gsf_ptGt20.root","read");
     _histo_recoToLoose_leptonSF_gsf_gt20 = (TH2F*)(_file_recoToLoose_leptonSF_gsf_gt20->Get("EGamma_SF2D"));
   }
 
@@ -305,19 +305,19 @@ TH2F *_histo_looseToTight_leptonSF_el_3l = NULL;
 float _get_looseToTight_leptonSF_ttH(int pdgid, float pt, float eta, int nlep){
 
   if (!_histo_looseToTight_leptonSF_mu_2lss) {
-    _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/leptonSF/lepMVAEffSF_m_2lss.root","read");
+    _file_looseToTight_leptonSF_mu_2lss = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/lepMVAEffSF_m_2lss.root","read");
     _histo_looseToTight_leptonSF_mu_2lss = (TH2F*)(_file_looseToTight_leptonSF_mu_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_2lss) {
-    _file_looseToTight_leptonSF_el_2lss = new TFile("../../data/leptonSF/lepMVAEffSF_e_2lss.root","read");
+    _file_looseToTight_leptonSF_el_2lss = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/lepMVAEffSF_e_2lss.root","read");
     _histo_looseToTight_leptonSF_el_2lss = (TH2F*)(_file_looseToTight_leptonSF_el_2lss->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_mu_3l) {
-    _file_looseToTight_leptonSF_mu_3l = new TFile("../../data/leptonSF/lepMVAEffSF_m_3l.root","read");
+    _file_looseToTight_leptonSF_mu_3l = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/lepMVAEffSF_m_3l.root","read");
     _histo_looseToTight_leptonSF_mu_3l = (TH2F*)(_file_looseToTight_leptonSF_mu_3l->Get("sf"));
   }
   if (!_histo_looseToTight_leptonSF_el_3l) {
-    _file_looseToTight_leptonSF_el_3l = new TFile("../../data/leptonSF/lepMVAEffSF_e_3l.root","read");
+    _file_looseToTight_leptonSF_el_3l = new TFile("../../data/OLD_sos_lepton_SF/leptonSF/lepMVAEffSF_e_3l.root","read");
     _histo_looseToTight_leptonSF_el_3l = (TH2F*)(_file_looseToTight_leptonSF_el_3l->Get("sf"));
   }
 
@@ -516,6 +516,38 @@ float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2,
 }
 
 
+
+float lepton_Id_selection(int pdg1, int pdg2, int pdg3){
+  if (std::abs(pdg1)==13 && std::abs(pdg2)==13 && std::abs(pdg3) ==13) return 123;
+  else if (std::abs(pdg1)==13 && std::abs(pdg2)==13 && !(std::abs(pdg3)==13))return 12; 
+  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13) && std::abs(pdg3) == 13)return 13; 
+  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13 && std::abs(pdg3)==13)return 23;
+  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13) && !(std::abs(pdg3)==13))return 1;
+  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13 && !(std::abs(pdg3)==13)) return 2;  
+  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13) && (std::abs(pdg3)==13))return 3;
+  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13) && !(std::abs(pdg3)==13)) return 4;
+  else {
+    std::cout << "Error in lepton_Id_selection" << std::endl;
+    return -99;
+  }
+  }
+
+
+float metmmm_pt( float pt1, float phi1, float pt2, float phi2, float pt3, float phi3, float metpt, float metphi, int lepton_code) {
+  if (lepton_code == 123)  return pt_4(pt1, phi1, pt2, phi2, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 12) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (lepton_code == 13) return pt_3(pt1, phi1, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 23) return pt_3(pt2, phi2, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 1) return pt_2(pt1, phi1, metpt, metphi);
+  else if (lepton_code == 2) return pt_2(pt2,phi2,metpt,metphi);  
+  else if (lepton_code == 3) return pt_2(pt3,phi3, metpt, metphi);
+  else if (lepton_code == 4) return metpt;
+  else {
+    std::cout << "Error in metmmm_pt" << std::endl;
+    return -99;
+  }
+}
+
 float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
   typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
   typedef ROOT::Math::LorentzVector<ROOT::Math::PxPyPzM4D<double>   > PxPyPzMVector;
@@ -533,3 +565,13 @@ float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, floa
   if(X0>0.&&X1>0.)return  (T1+T2).M();
   else            return -(T1+T2).M();
 }
+
+
+
+
+float eleWPVVL(float pt, float etaSc, float mva){
+  if (pt<=10 && ((std::abs(etaSc)<0.8 && mva>-0.265) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > -0.556) || (std::abs(etaSc)>=1.479 && mva>-0.6))) return 1;
+  else if (pt>10 && ((std::abs(etaSc)<0.8 && mva > 0.87) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > 0.30) || (std::abs(etaSc)>=1.479 && mva >-0.30))) return 1;
+  else return 0;
+}
+
