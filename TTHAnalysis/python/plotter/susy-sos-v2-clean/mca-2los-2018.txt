@@ -1,5 +1,5 @@
 #incl_signal    : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-signal.txt"
-incl_prompt_tt  : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-promt-tt.txt"
+incl_prompt_tt  : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-prompt-tt.txt"
 incl_prompt_dy  : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-prompt-dy.txt"
 incl_prompt_vv  : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-prompt-vv.txt"
 incl_mcfakes    : + ; IncludeMca="susy-sos-v2-clean/mca-includes/2018/mca-2los-mcfakes.txt"
