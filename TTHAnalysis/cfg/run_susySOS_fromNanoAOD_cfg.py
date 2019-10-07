@@ -131,8 +131,8 @@ if year == 2018:
     elif analysis == "frqcd":
         mcSamples = byCompName(mcSamples_, [
             "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
-            "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*",  
-            #"QCD_Pt(20|30|50|80|120|170)to\d+$",        
+            "QCD_Pt(20|30|50|80|120|170)to.*_EMs.*",  
+            "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*",        
             "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
         ])
         DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
@@ -225,7 +225,7 @@ elif year == 2017:
    elif analysis == "frqcd":
     mcSamples = byCompName(mcSamples_, [
         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
-        "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_EMs.*", 
         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
     ])
@@ -360,7 +360,8 @@ elif year == 2016:
    elif analysis == "frqcd":
     mcSamples = byCompName(mcSamples_, [
         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
-        "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+        # Could not find QCD enriched NANOAODSIM samples
+        #"QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
     ])
