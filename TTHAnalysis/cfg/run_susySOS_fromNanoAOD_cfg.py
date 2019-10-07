@@ -122,12 +122,22 @@ if year == 2018:
 
         ])
 
-    if analysis == "main":
 ##        DatasetsAndTriggers.append( ("DoubleMuon", triggers["mumu_iso"] + triggers["3mu"]) )
         DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
         DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
 ##        DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) ) ##which one?? ##PD SingleMuon o MET?
 ##conf db e cercare stream dato il nome del trigger
+
+    elif analysis == "frqcd":
+        mcSamples = byCompName(mcSamples_, [
+            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+            "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*",  
+            #"QCD_Pt(20|30|50|80|120|170)to\d+$",        
+            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+        ])
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+        DatasetsAndTriggers.append( ("EGamma",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 elif year == 2017:
     mcSamples = byCompName(mcSamples_, [
@@ -211,6 +221,20 @@ elif year == 2017:
 
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
+
+   elif analysis == "frqcd":
+    mcSamples = byCompName(mcSamples_, [
+        "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
+        "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+    ])
+
+    DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+    DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+
+
 
 elif year == 2016:
     mcSamples = byCompName(mcSamples_, [
@@ -333,6 +357,17 @@ elif year == 2016:
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
 # make MC
+   elif analysis == "frqcd":
+    mcSamples = byCompName(mcSamples_, [
+        "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+        "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
+        "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+    ])
+
+    DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+    DatasetsAndTriggers.append( ("DoubleEG",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+    DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 print "mcSamples ",mcSamples
 
@@ -363,7 +398,7 @@ if getHeppyOption("nanoPreProcessor"):
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
                    2018: ("mc102X","data102X_ABC","data102X_D")}
-    preproc_cmsswArea = "/afs/cern.ch/user/v/vtavolar/work/SusySOSSW_2_clean/nanoAOD/CMSSW_10_2_15" #MODIFY ACCORDINGLY
+    preproc_cmsswArea = "/afs/cern.ch/work/i/ipapaver/susySOS_nanoAOD_friendProduction/NewFrameworkVit_v1_FRntuples/CMSSW_10_4_0" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
         preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True, injectTriggerFilter=True, injectJSON=True)
@@ -411,7 +446,40 @@ process.skimNLeps = cms.EDFilter("PATLeptonCountFilter",
 process.nanoAOD_step.insert(0, cms.Sequence(process.selectEl + process.selectMu + process.skimNLeps))
 """)
 
-cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
+    if analysis == "frqcd":
+        for comp in selectedComponents:
+            comp.preprocessor = comp.preprocessor.clone(keepOutput = False, injectTriggerFilter = True, injectJSON = True)
+            if 'Mu' in comp.dataset:
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """
+process.skim1Mu = cms.EDFilter("PATMuonRefSelector",
+    src = cms.InputTag("slimmedMuons"),
+    cut = cms.string("pt > %g && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
+    filter = cms.bool(True),
+)
+process.nanoAOD_step.insert(0, process.skim1Mu)
+""" % (7.5 if "DoubleMuon" in comp.dataset else 4.5))
+            elif 'QCD_Pt' in comp.dataset or "EGamma" in comp.dataset or "SingleElectron" in comp.dataset or "DoubleEG" in comp.dataset:
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """
+process.skim1El = cms.EDFilter("PATElectronRefSelector",
+    src = cms.InputTag("slimmedElectrons"),
+    cut = cms.string("pt > 6 && miniPFIsolation.chargedHadronIso < 0.45*pt && abs(dB('PV3D')) < 8*edB('PV3D')"),
+    filter = cms.bool(True),
+)
+process.nanoAOD_step.insert(0, process.skim1El)
+""")
+
+
+if analysis == "main":
+    cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
+if analysis == "frqcd":
+    cropToLumi(selectedComponents, 1.0)
+    cropToLumi(byCompName(selectedComponents,["QCD"]), 0.3)
+    cropToLumi(byCompName(selectedComponents,["QCD_Pt\d+to\d+$"]), 0.1)
+    configureSplittingFromTime(selectedComponents, 20, 3, maxFiles=8)
+    configureSplittingFromTime(byCompName(selectedComponents, ["EGamma","Single.*Run2017.*","SingleMuon_Run2018.*"]), 10, 4, maxFiles=12) 
+    configureSplittingFromTime(byCompName(selectedComponents, ["WJ","TT","DY","QCD_Mu15"]), 60, 3, maxFiles=6) 
+    configureSplittingFromTime(byCompName(selectedComponents, [r"QCD_Pt\d+to\d+$","QCD.*EME"]), 60, 3, maxFiles=6) 
+
 
 # print summary of components to process
 if getHeppyOption("justSummary"): 
@@ -428,6 +496,12 @@ cut = susySOS_skim_cut
 branchsel_in = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/tools/nanoAOD/branchsel_in.txt"
 branchsel_out = None
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"
+
+if analysis == 'frqcd':
+    module        = susySOS_sequence_step1_FR
+    cut           = susySOS_skim_cut_FR
+    compression   = "LZMA:9"
+    branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/plotter/susy-sos-v2-clean/qcd1l-skim-ec.txt"
 
 POSTPROCESSOR = PostProcessor(None, [], modules = modules,
         cut = cut, prefetch = True, longTermCache = True,

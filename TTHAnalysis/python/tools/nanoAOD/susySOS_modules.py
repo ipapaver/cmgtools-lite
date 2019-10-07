@@ -15,7 +15,7 @@ conf = dict(
 #    muonId = "softMvaId" ###looseId
 )
 susySOS_skim_cut =  ("nMuon + nElectron >= 2 &&" + ##if heppy option fast
-###        "MET_pt > {minMet}  &&"+
+       "MET_pt > {minMet}  &&"+
        "Sum$(Muon_pt > {muPt}) +"
        "Sum$(Electron_pt > {elePt}) >= 2").format(**conf) ## && Muon_miniPFRelIso_all < {miniRelIso} && Electron_miniPFRelIso_all < {miniRelIso}  #mettere qui MET_pt>50 #cp dal cfg la selezione
 #cut  = ttH_skim_cut
@@ -57,11 +57,13 @@ lepFR = ttHLepQCDFakeRateAnalyzer(jetSel = lambda j : j.pt > 25 and abs(j.eta) <
                                   pairSel = lambda pair : deltaR(pair[0].eta, pair[0].phi, pair[1].eta, pair[1].phi) > 0.7,
                                   maxLeptons = 1, requirePair = True)
 
-#susySOS_sequence_step1_FR = [m for m in susySOS_sequence_step1 if m != lepSkim] + [ lepFR ]
-#ttH_skim_cut_FR = ("nMuon + nElectron >= 1 && nJet >= 1 && Sum$(Jet_pt > 25 && abs(Jet_eta)<2.4) >= 1 &&" + 
-#       "Sum$(Muon_pt > {muPt} && Muon_miniPFRelIso_all < {miniRelIso} && Muon_sip3d < {sip3d}) +"
-#       "Sum$(Electron_pt > {muPt} && Electron_miniPFRelIso_all < {miniRelIso} && Electron_sip3d < {sip3d} && Electron_{eleId}) >= 1").format(**conf)
+susySOS_sequence_step1_FR = [m for m in susySOS_sequence_step1 if m != lepSkim] + [ lepFR ]
+ttH_skim_cut_FR = ("nMuon + nElectron >= 1 && nJet >= 1 && Sum$(Jet_pt > 25 && abs(Jet_eta)<2.4) >= 1 &&" + 
+       "Sum$(Muon_pt > {muPt} && Muon_sip3d < {sip3d}) +"
+       "Sum$(Electron_pt > {elePt} && Electron_sip3d < {sip3d} && Electron_{eleId}) >= 1").format(**conf)
 
+#&& Muon_miniPFRelIso_all < {miniRelIso}
+#&& Electron_miniPFRelIso_all < {miniRelIso}
 
 #==== items below are normally run as friends ====
 
