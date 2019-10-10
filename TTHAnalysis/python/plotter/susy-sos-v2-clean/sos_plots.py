@@ -5,7 +5,7 @@ import os
 import argparse
 
 helpText = "LEP = '2los', '3los'\n\
-REG = 'sr', 'sr_col', 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss', 'cr_wz', 'appl', 'appl_col'\n\
+REG = 'sr', 'sr_col','sr_ddbkg' 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss', 'cr_wz', 'appl', 'appl_col', 'appl_step1_1F', 'appl_step1_2F', 'appl_step1_3F', 'appl_step1_incl', 'appl_step2_1F', 'appl_step2_2F', 'appl_step2_3F', 'appl_step2_incl', 'cr_ss_step3_1F', 'cr_ss_step3_2F', 'cr_ss_step3_3F', 'cr_ss_step3_incl'\n\
 BIN = 'min', 'low', 'med', 'high'"
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
                                  epilog=helpText)
@@ -28,7 +28,7 @@ conf="%s_%s_%s"%(args.lep,args.reg,args.bin)
 
 if YEAR not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please choose '2016', '2017' or '2018'")
 if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
-if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
+if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col",'appl_step1_1F', 'appl_step1_2F', 'appl_step1_3F', 'appl_step1_incl', 'appl_step2_1F', 'appl_step2_2F', 'appl_step2_3F', 'appl_step2_incl', 'appl_step3_1F', 'appl_step3_2F', 'appl_step3_3F', 'appl_step3_incl']: raise RuntimeError("Unknown choice for REG option. Please check help." )
 if args.bin not in ["min", "low", "med", "high"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
 
 lumis = {
@@ -66,7 +66,7 @@ def base(selection):
     wBG = " '1.0' "
     #wFS = " '1.0' "
     if selection=='2los':
-         GO="%s susy-sos-v2-clean/mca/mca-2los-%s.txt susy-sos-v2-clean/2los_cuts.txt "%(CORE, YEAR)
+         GO="%s susy-sos-v2-clean/mca/%s/mca-2los-%s.txt susy-sos-v2-clean/2los_cuts.txt "%(CORE, YEAR, YEAR)
          if dowhat in ["plots","ntuple"]: GO+=" susy-sos-v2-clean/2los_plots.txt "
 
          if YEAR == "2016":
@@ -83,7 +83,7 @@ def base(selection):
          GO += " --binname 2los "
  
     elif selection=='3l':
-        GO="%s susy-sos-v2-clean/mca/mca-3l-%s.txt susy-sos-v2-clean/3l_cuts.txt "%(CORE,YEAR)
+        GO="%s susy-sos-v2-clean/mca/%s/mca-3l-%s.txt susy-sos-v2-clean/3l_cuts.txt "%(CORE,YEAR, YEAR)
         if dowhat in ["plots","ntuple"]: GO+=" susy-sos-v2-clean/3l_plots.txt "
         
         if YEAR == "2016":
@@ -164,6 +164,8 @@ if __name__ == '__main__':
         x = binYearChoice(x,torun,YEAR)
     
         if 'sr' in torun:
+            if '_ddbkg' in torun:
+                x = x.replace("susy-sos-v2-clean/mca/%s/mca-2los-%s.txt", "susy-sos-v2-clean/mca/%s/susy-sos-v2-clean/mca/mca-2los-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -174,6 +176,21 @@ if __name__ == '__main__':
                      x = x.replace('-E ^met250$','-E ^met300_col$')
 
         if 'appl' in torun:
+            if '_step1' in torun:
+                x = x.replace("susy-sos-v2-clean/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos-v2-clean/mca/%s/mca-2los-%s-semidd-step1.txt"%(YEAR, YEAR))
+                if '_1F' in torun:
+                    x=add(x, "--xp fakes_matched2fake_.* --xp fakes_matchedAL1LNTfake_.*")
+                if '_2F' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.* --xp fakes_matchedAL1LNTfake_.*")
+                if '_incl' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.*")
+            if '_step2' in torun:
+                x = x.replace("susy-sos-v2-clean/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos-v2-clean/mca/%s/mca-2los-%s-semidd-step2.txt"%(YEAR, YEAR))
+                x=add(x, "--mcc ScaleFactors/SemiDD_ScaleFactors_%s.txt"%(YEAR))
+                if '_1F' in torun:
+                    x=add(x, "--xp fakes_matched2fake_.*")
+                if '_2F' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.*")
             if '_col' in torun:
                 x = add(x,"-X ^mT$ -X ^SF$ ")
                 if '_med' in torun: 
@@ -209,17 +226,44 @@ if __name__ == '__main__':
             x = add(x,"-E ^CRVVlepId$ -E ^CRVVleplepPt$ -E ^CRVVmT$ ")
 
         if 'cr_ss' in torun:
+            if '_step3' in torun:
+                 x = x.replace("susy-sos-v2-clean/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos-v2-clean/mca/%s/mca-2los-%s-semidd-step3.txt"%(YEAR, YEAR))
+                 x=add(x, "--mcc ScaleFactors/SemiDD_ScaleFactors_%s.txt"%(YEAR))
+                 #if '_1F' in torun:
+                 #    x=add(x, "--xp fakes_matched2fake_.*")
+                 #if '_2F' in torun:
+                 #    x=add(x, "--xp fakes_matched1fake_.*")
             if '_med' in torun:
-                x = x.replace('-E ^met200$','-E ^met200_CR$')
-                x = add(x,'-X ^pt5sublep$ ')
+                 x = x.replace('-E ^met200$','-E ^met200_CR$')
+                 x = add(x,'-X ^pt5sublep$ ')
             x = add(x,"-X ^mT$ ")
             x = add(x,"-I ^OS$ ")
 
     elif '3l_' in torun:
         x = base('3l')
         x = binYearChoice(x,torun,YEAR)
+        if 'sr_ddbkg' in torun:
+           x = x.replace("susy-sos-v2-clean/mca/%s/mca-3l-%s.txt", "susy-sos-v2-clean/mca/%s/susy-sos-v2-clean/mca/mca-3l-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))
     
         if 'appl' in torun:
+            if '_step1' in torun:
+                x = x.replace("susy-sos-v2-clean/mca/%s/mca-3l-%s.txt", "susy-sos-v2-clean/mca/%s/susy-sos-v2-clean/mca/mca-3l-%s-semidd-step1.txt"%(YEAR, YEAR, YEAR, YEAR))
+                    if '_1F' in torun:
+                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                    if '_2F' in torun:
+                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                    if '_3F' in torun:
+                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                    if '_incl' in torun:
+                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.* --sP fakes_matched3fake_.*")
+            if '_step2' in torun:
+                x = x.replace("susy-sos-v2-clean/mca/%s/mca-3l-%s.txt", "susy-sos-v2-clean/mca/%s/susy-sos-v2-clean/mca/mca-3l-%s-semidd-step2.txt"%(YEAR, YEAR, YEAR, YEAR))
+                    if '_1F' in torun:
+                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
+                    if '_2F' in torun:
+                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.*")
+                    if '_3F' in torun:
+                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
             x = add(x,"-X ^threeTight$ ")
             x = add(x,"-E ^oneNotTight$ ")
 
