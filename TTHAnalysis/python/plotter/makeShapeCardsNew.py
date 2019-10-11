@@ -1,8 +1,18 @@
 #!/usr/bin/env python
 from CMGTools.TTHAnalysis.plotter.mcAnalysis import *
 from CMGTools.TTHAnalysis.plotter.histoWithNuisances import _cloneNoDir
-import re, sys, os, os.path
+import re, sys, os, os.path, errno
 systs = {}
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 from optparse import OptionParser
 parser = OptionParser(usage="%prog [options] mc.txt cuts.txt var bins")
@@ -29,7 +39,7 @@ cuts = CutsFile(args[1],options)
 binname = os.path.basename(args[1]).replace(".txt","") if options.binname == 'default' else options.binname
 if binname[0] in "1234567890": raise RuntimeError("Bins should start with a letter.")
 outdir  = options.outdir+"/" if options.outdir else ""
-if not os.path.exists(outdir): os.mkdir(outdir)
+if not os.path.exists(outdir): mkdir_p(outdir)
 
 report={}
 if options.infile:

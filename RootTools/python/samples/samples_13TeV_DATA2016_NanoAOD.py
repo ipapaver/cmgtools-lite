@@ -169,7 +169,7 @@ SingleElectron_Run2016E_1June2019 = kreator.makeDataComponent("SingleElectron_Ru
 SingleMuon_Run2016E_1June2019     = kreator.makeDataComponent("SingleMuon_Run2016E_1June2019"    , "/SingleMuon/Run2016E-Nano1June2019-v1/NANOAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2016E_1June2019   = kreator.makeDataComponent("SinglePhoton_Run2016E_1June2019"  , "/SinglePhoton/Run2016E-Nano1June2019-v1/NANOAOD"  , "CMS", ".*root", json)
 DoubleEG_Run2016E_1June2019       = kreator.makeDataComponent("DoubleEG_Run2016E_1June2019"      , "/DoubleEG/Run2016E-Nano1June2019-v1/NANOAOD"      , "CMS", ".*root", json)
-MuonEG_Run2016E_1June2019         = kreator.makeDataComponent("MuonEG_Run2016E_1June2019"        , "/MuonEG/Run2016E-Nano1June2019-v3/NANOAOD"        , "CMS", ".*root", json)
+MuonEG_Run2016E_1June2019         = kreator.makeDataComponent("MuonEG_Run2016E_1June2019"        , "/MuonEG/Run2016E-Nano1June2019-v2/NANOAOD"        , "CMS", ".*root", json)
 DoubleMuon_Run2016E_1June2019     = kreator.makeDataComponent("DoubleMuon_Run2016E_1June2019"    , "/DoubleMuon/Run2016E-Nano1June2019-v1/NANOAOD"    , "CMS", ".*root", json)
 Tau_Run2016E_1June2019            = kreator.makeDataComponent("Tau_Run2016E_1June2019"           , "/Tau/Run2016E-Nano1June2019-v1/NANOAOD"           , "CMS", ".*root", json)
 
@@ -212,7 +212,7 @@ dataSamples_Run2016G_1June2019 = [JetHT_Run2016G_1June2019, HTMHT_Run2016G_1June
 
 JetHT_Run2016H_1June2019          = kreator.makeDataComponent("JetHT_Run2016H_1June2019"         , "/JetHT/Run2016H-Nano1June2019-v1/NANOAOD"         , "CMS", ".*root", json)
 HTMHT_Run2016H_1June2019          = kreator.makeDataComponent("HTMHT_Run2016H_1June2019"         , "/HTMHT/Run2016H-Nano1June2019-v1/NANOAOD"         , "CMS", ".*root", json)
-MET_Run2016H_1June2019            = kreator.makeDataComponent("MET_Run2016H_1June2019"           , "/MET/Run2016H-Nano1June2019-v3/NANOAOD"           , "CMS", ".*root", json)
+MET_Run2016H_1June2019            = kreator.makeDataComponent("MET_Run2016H_1June2019"           , "/MET/Run2016H-Nano1June2019-v2/NANOAOD"           , "CMS", ".*root", json)
 SingleElectron_Run2016H_1June2019 = kreator.makeDataComponent("SingleElectron_Run2016H_1June2019", "/SingleElectron/Run2016H-Nano1June2019-v1/NANOAOD", "CMS", ".*root", json)
 SingleMuon_Run2016H_1June2019     = kreator.makeDataComponent("SingleMuon_Run2016H_1June2019"    , "/SingleMuon/Run2016H-Nano1June2019-v1/NANOAOD"    , "CMS", ".*root", json)
 SinglePhoton_Run2016H_1June2019   = kreator.makeDataComponent("SinglePhoton_Run2016H_1June2019"  , "/SinglePhoton/Run2016H-Nano1June2019-v1/NANOAOD"  , "CMS", ".*root", json)

@@ -27,16 +27,16 @@ if getHeppyOption("nanoPreProcessor"):
         from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
 else:
     if year == 2018:
-        from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIAutumn18NanoAODv5 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2018_NanoAOD import dataSamples_1June2019 as allData
         from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import all_triggers as triggers
     elif year == 2017:
-        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.samples_13TeV_RunIIFall17NanoAODv5 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2017_NanoAOD import dataSamples_1June2019 as allData
         from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import all_triggers as triggers
     elif year == 2016:
-        from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv4 import samples as mcSamples_
-        from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import samples as allData
+        from CMGTools.RootTools.samples.samples_13TeV_RunIISummer16NanoAODv5 import samples as mcSamples_
+        from CMGTools.RootTools.samples.samples_13TeV_DATA2016_NanoAOD import dataSamples_1June2019 as allData
         from CMGTools.RootTools.samples.triggers_13TeV_DATA2016 import all_triggers as triggers
 
 
@@ -44,6 +44,11 @@ DatasetsAndTriggers = []
 if year == 2018:
     if analysis == "main":
         mcSamples = byCompName(mcSamples_, [
+
+##            "DYJetsToLL_M10to50_LO",
+##            "DYJetsToLL_M50_LO_ext",
+
+
             "T_tWch_noFullyHad$",
             "TBar_tWch_noFullyHad$",
 
@@ -56,10 +61,10 @@ if year == 2018:
             "DYJetsToLL_M50_HT100to200",
             "DYJetsToLL_M50_HT200to400",
             "DYJetsToLL_M50_HT400to600," 
-            "DYJetsToLL_M50_HT400to600_ext2",
+##            "DYJetsToLL_M50_HT400to600_ext2",
             "DYJetsToLL_M50_HT600to800",
             "DYJetsToLL_M50_HT800to1200",
-            #"DYJetsToLL_M50_HT1200to2500",
+            "DYJetsToLL_M50_HT1200to2500",
             "DYJetsToLL_M50_HT2500toInf",
 
             "TTJets_DiLepton$",
@@ -106,13 +111,13 @@ if year == 2018:
             ##signal SUSY
             "SMS_TChiWZ"
             
-##relics from tth             
-##            "TT[WZ]_LO$",
-##            "TTHnobb_pow$",
-##            "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
-##            "WpWpJJ$",
-##            "GGHZZ4L$", "VHToNonbb_ll$",
-##            "WWW_ll$", "WWZ$", "WZG$",  "WW_DPS$", 
+###relics from tth             
+###            "TT[WZ]_LO$",
+###            "TTHnobb_pow$",
+###            "TZQToLL$", "tWll$", "TTTT$", "TTWW$",
+###            "WpWpJJ$",
+###            "GGHZZ4L$", "VHToNonbb_ll$",
+###            "WWW_ll$", "WWZ$", "WZG$",  "WW_DPS$", 
             
 
         ])
@@ -126,8 +131,9 @@ if year == 2018:
 
 elif year == 2017:
     mcSamples = byCompName(mcSamples_, [
+        "DYJetsToLL_M10to50_LO_ext"
 ##        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
-        
+
         ##main bkgs
         "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
 
@@ -208,7 +214,7 @@ elif year == 2017:
 
 elif year == 2016:
     mcSamples = byCompName(mcSamples_, [
-
+        "DYJetsToLL_M10to50_LO$"
 
         ##main bkgs
         "T_tWch_noFullyHad", #extensions are to be included?
@@ -327,6 +333,9 @@ elif year == 2016:
     DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
     DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
 # make MC
+
+print "mcSamples ",mcSamples
+
 mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
 for comp in mcSamples:
     comp.triggers = mcTriggers
@@ -340,12 +349,12 @@ for pd, triggers in DatasetsAndTriggers:
         dataSamples.append(comp)
     vetoTriggers += triggers[:]
 
-selectedComponents = mcSamples + dataSamples
+selectedComponents = mcSamples ##+ dataSamples
 if getHeppyOption('selectComponents'):
     selectedComponents = byCompName(selectedComponents, getHeppyOption('selectComponents').split(","))
-autoAAA(selectedComponents, quiet=not(getHeppyOption("verboseAAA",False)))
+autoAAA(selectedComponents, quiet=False)##not(getHeppyOption("verboseAAA",False)))
 configureSplittingFromTime(mcSamples,250 if preprocessor else 10,10)
-configureSplittingFromTime(dataSamples,80 if preprocessor else 10,10)
+#configureSplittingFromTime(dataSamples,80 if preprocessor else 10,10)
 selectedComponents, _ = mergeExtensions(selectedComponents)
 
 # create and set preprocessor if requested

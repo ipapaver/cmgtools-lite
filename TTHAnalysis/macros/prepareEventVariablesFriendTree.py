@@ -294,8 +294,9 @@ for D in sorted(glob(args[0]+"/*")):
             if found: continue
         data =  any(x in short for x in "DoubleMu DoubleEl DoubleEG MuEG MuonEG SingleMu SingleEl EGamma".split()) # FIXME
         f = ROOT.TFile.Open(fname)
-        t = f.Get(treename)
-        if not t:
+        try:
+            t = f.Get(treename)
+        except:
             print "Corrupted ",fname
             continue
         entries = t.GetEntries()

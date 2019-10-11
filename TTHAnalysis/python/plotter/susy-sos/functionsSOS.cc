@@ -1,15 +1,66 @@
-// we need headers
-#include <cmath>
+#include "TFile.h"
+#include "TH2.h"
+#include "TH2Poly.h"
+#include "TGraphAsymmErrors.h"
+#include "TRandom3.h"
+
 #include "Math/GenVector/LorentzVector.h"
 #include "Math/GenVector/PtEtaPhiM4D.h"
 #include "Math/GenVector/PxPyPzM4D.h"
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
+
 // we need to declare the functions we use from functions.cc
 float pt_2(float,float,float,float) ;
 float pt_3(float,float,float,float,float,float) ;
+float pt_4(float, float, float, float , float, float , float, float);
+
 // and we need an empty function
 void functionsSOS() {}
-// and we can check that everything compiles fine with
-// $ root.exe -b -l -q functions.cc+ susy-sos/functionsSOS.cc+
+
+float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
+  if (std::abs(pdg1)==13 && std::abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
+  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
+  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13)) return metpt;
+  else {
+    std::cout << "Error in metmm_pt" << std::endl;
+    return -99;
+  }
+}
+
+float lepton_Id_selection(int pdg1, int pdg2, int pdg3){
+  if (std::abs(pdg1)==13 && std::abs(pdg2)==13 && std::abs(pdg3) ==13) return 123;
+  else if (std::abs(pdg1)==13 && std::abs(pdg2)==13 && !(std::abs(pdg3)==13))return 12;
+  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13) && std::abs(pdg3) == 13)return 13;
+  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13 && std::abs(pdg3)==13)return 23;
+  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13) && !(std::abs(pdg3)==13))return 1;
+  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13 && !(std::abs(pdg3)==13)) return 2;
+  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13) && (std::abs(pdg3)==13))return 3;
+  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13) && !(std::abs(pdg3)==13)) return 4;
+  else {
+    std::cout << "Error in lepton_Id_selection" << std::endl;
+    return -99;
+  }
+}
+
+float metmmm_pt( float pt1, float phi1, float pt2, float phi2, float pt3, float phi3, float metpt, float metphi, int lepton_code) {
+  if (lepton_code == 123)  return pt_4(pt1, phi1, pt2, phi2, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 12) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
+  else if (lepton_code == 13) return pt_3(pt1, phi1, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 23) return pt_3(pt2, phi2, pt3, phi3, metpt, metphi);
+  else if (lepton_code == 1) return pt_2(pt1, phi1, metpt, metphi);
+  else if (lepton_code == 2) return pt_2(pt2,phi2,metpt,metphi);
+  else if (lepton_code == 3) return pt_2(pt3,phi3, metpt, metphi);
+  else if (lepton_code == 4) return metpt;
+  else {
+    std::cout << "Error in metmmm_pt" << std::endl;
+    return -99;
+  }
+}
 
 float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, float l1_Phi, float l2_Pt, float l2_Eta, float l2_Phi ) {
   typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
@@ -29,42 +80,64 @@ float mass_tautau( float Met_Pt, float Met_Phi,  float l1_Pt, float l1_Eta, floa
   else            return -(T1+T2).M();
 }
 
+std::vector<int> boundaries_runPeriod2016 = {272007,275657,276315,276831,277772,278820,280919};
+std::vector<int> boundaries_runPeriod2017 = {297020,299337,302030,303435,304911};
+std::vector<int> boundaries_runPeriod2018 = {315252,316998,319313,320394};
 
-int SR_bins_EWKino(float Mll){
-  if     (4.<Mll && Mll<9.5) return 1;
-  else if(10.5<Mll && Mll<=20.) return 2;
-  else if(20.<Mll && Mll<=30.) return 3;
-  else if(30.<Mll) return 4;
-  else return -99;
+std::vector<double> lumis_runPeriod2016 = {5.75, 2.573, 4.242, 4.025, 3.105, 7.576, 8.651};
+std::vector<double> lumis_runPeriod2017 = {4.802,9.629,4.235,9.268,13.433};
+std::vector<double> lumis_runPeriod2018 = {13.978 , 7.064 , 6.899 , 31.748};
+
+bool cumul_lumis_isInit = false;
+std::vector<float> cumul_lumis_runPeriod2016;
+std::vector<float> cumul_lumis_runPeriod2017;
+std::vector<float> cumul_lumis_runPeriod2018;
+
+int runPeriod(int run, int year){
+  std::vector<int> boundaries;
+  if (year == 2016)
+    boundaries = boundaries_runPeriod2016;
+  else if (year == 2017)
+    boundaries = boundaries_runPeriod2017;
+  else if (year == 2018)
+    boundaries = boundaries_runPeriod2018;
+  else{
+    std::cout << "Wrong year " << year << std::endl;
+    return -99;
+  }
+  auto period = std::find_if(boundaries.begin(),boundaries.end(),[run](const int &y){return y>run;});
+  return std::distance(boundaries.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 ) ;
 }
 
-int SR_bins_stop(float ptlep1){
-  if     (ptlep1 <=12.) return 1;
-  else if(ptlep1 >12. && ptlep1 <=20.) return 2;
-  else if(ptlep1 >20.) return 3; 
-  else return -99;
-}
+TRandom3 rand_generator_RunDependentMC(0);
+int hashBasedRunPeriod2017(int isData, int run, int lumi, int event, int year){
+  if (isData) return runPeriod(run,year);
+  if (!cumul_lumis_isInit){
+    cumul_lumis_runPeriod2016.push_back(0);
+    cumul_lumis_runPeriod2017.push_back(0);
+    cumul_lumis_runPeriod2018.push_back(0);
+    float tot_lumi_2016 = std::accumulate(lumis_runPeriod2016.begin(),lumis_runPeriod2016.end(),float(0.0));
+    float tot_lumi_2017 = std::accumulate(lumis_runPeriod2017.begin(),lumis_runPeriod2017.end(),float(0.0));
+    float tot_lumi_2018 = std::accumulate(lumis_runPeriod2018.begin(),lumis_runPeriod2018.end(),float(0.0));
 
-
-float metmm_pt(int pdg1, float pt1, float phi1, int pdg2, float pt2, float phi2, float metpt, float metphi) {
-  if (std::abs(pdg1)==13 && std::abs(pdg2)==13) return pt_3(pt1,phi1,pt2,phi2,metpt,metphi);
-  else if (std::abs(pdg1)==13 && !(std::abs(pdg2)==13)) return pt_2(pt1,phi1,metpt,metphi);
-  else if (!(std::abs(pdg1)==13) && std::abs(pdg2)==13) return pt_2(pt2,phi2,metpt,metphi);
-  else if (!(std::abs(pdg1)==13) && !(std::abs(pdg2)==13)) return metpt;
-  else return -99;
-}
-
-
-
-float eleWPVVL(float pt, float etaSc, float mva){
-  if (pt<=10 && ((std::abs(etaSc)<0.8 && mva>-0.265) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > -0.556) || (std::abs(etaSc)>=1.479 && mva>-0.6))) return 1;
-  else if (pt>10 && ((std::abs(etaSc)<0.8 && mva > 0.87) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > 0.30) || (std::abs(etaSc)>=1.479 && mva >-0.30))) return 1;
-  else return 0;
-}
-
-
-float eleWPT(float pt, float etaSc, float mva){
-  if (pt<=10 && ((std::abs(etaSc)<0.8 && mva>-0.265) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > -0.556) || (std::abs(etaSc)>=1.479 && mva>-0.551))) return 1;
-  else if (pt>10 && ((std::abs(etaSc)<0.8 && mva > 0.87) || (std::abs(etaSc)>=0.8 && std::abs(etaSc)<1.479 && mva > 0.60) || (std::abs(etaSc)>=1.479 && mva >0.17))) return 1;
-  else return 0;
+    for (uint i=0; i<lumis_runPeriod2016.size(); i++) cumul_lumis_runPeriod2016.push_back(cumul_lumis_runPeriod2016.back()+lumis_runPeriod2016[i]/tot_lumi_2016);
+    for (uint i=0; i<lumis_runPeriod2017.size(); i++) cumul_lumis_runPeriod2017.push_back(cumul_lumis_runPeriod2017.back()+lumis_runPeriod2017[i]/tot_lumi_2017);
+    for (uint i=0; i<lumis_runPeriod2018.size(); i++) cumul_lumis_runPeriod2018.push_back(cumul_lumis_runPeriod2018.back()+lumis_runPeriod2018[i]/tot_lumi_2018);
+    cumul_lumis_isInit = true;
+  }
+  Int_t x = 161248*run+2136324*lumi+12781432*event;
+  unsigned int hash = TString::Hash(&x,sizeof(Int_t));
+  rand_generator_RunDependentMC.SetSeed(hash);
+  float val = rand_generator_RunDependentMC.Uniform();
+  
+  vector<float> cumul;
+  if (year == 2016) cumul = cumul_lumis_runPeriod2016;
+  else if (year == 2017) cumul = cumul_lumis_runPeriod2017;
+  else if (year == 2018) cumul = cumul_lumis_runPeriod2018;
+  else{
+    std::cout << "Wrong year " << year << std::endl;
+    return -99;
+  }
+  auto period = std::find_if(cumul.begin(),cumul.end(),[val](const float &y){return y>val;});
+  return std::distance(cumul.begin(),period)-1 + ( (year == 2017) ? 7 : 0 ) + ( (year == 2018) ? 12 : 0 );
 }

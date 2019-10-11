@@ -4,9 +4,10 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 from CMGTools.TTHAnalysis.treeReAnalyzer import Collection as CMGCollection
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput, writeOutput
 
+import inspect
 
 class ObjTagger(Module):
-    def __init__(self,label,coll,sel,sizelimit=10,linkColl='', linkVar=''):
+    def __init__(self,label,coll,sel,sizelimit=15,linkColl='', linkVar=''):
         self.label = "" if (label in ["",None]) else (label)
         self.coll = coll
         self.sel = sel
@@ -41,9 +42,14 @@ class ObjTagger(Module):
             ispassing = True
             for selector in self.sel:
                 if self.linkColl == "":
-                    if not selector(ob):
-                        ispassing = False
-                        break
+                    if len(inspect.getargspec(selector)[0])>1:
+                        if not selector(ob,event.year):
+                            ispassing = False
+                            break
+                    else:
+                        if not selector(ob):
+                            ispassing = False
+                            break
                 else:
                     if not selector(ob,linked[getattr(ob,self.linkVar)]):
                         ispassing = False

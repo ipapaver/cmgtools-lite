@@ -3,10 +3,13 @@ import os.path, types
 from array import array
 from math import log, exp
 
-from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop, Module, Collection
+from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
+from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
+from CMGTools.TTHAnalysis.treeReAnalyzer import ROOT, EventLoop##,  Collection #Module,
 from BTagCSVFullShape import BTagCSVFullShape
+from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
 
-class BTagEventWeightFriend:
+class BTagEventWeightFriend(Module):
     def __init__(self,
                  csvfile,
                  label='eventBTagSF',
@@ -37,6 +40,9 @@ class BTagEventWeightFriend:
 
         self.branches = self.listBranches()
 
+    def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
+        declareOutput(self, wrappedOutputTree, self.branches)
+
     def listBranches(self):
         out = []
         for syst in self.btag_systs:
@@ -46,20 +52,22 @@ class BTagEventWeightFriend:
 
         return out
 
-    def __call__(self, event):
+#    def __call__(self, event):
+    def analyze(self, event):
         ret = {k:1.0 for k in self.branches}
-        if self.mcOnly and event.isData: return ret
+#        if self.mcOnly and event.isData: return ret
 
         jetscoll = {}
         for _var in self.systsJEC:
-            jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
+ #           jets = [j for j in Collection(event,"JetSel"+self.recllabel,"nJetSel"+self.recllabel)]
+            jets = [j for j in Collection(event,"JetSel"+self.recllabel)]
             jetptcut = 25
             if (_var==0): jets = filter(lambda x : x.pt>jetptcut, jets)
-            elif (_var==1): jets = filter(lambda x : x.pt*x.corr_JECUp/x.corr>jetptcut, jets)
-            elif (_var==-1): jets = filter(lambda x : x.pt*x.corr_JECDown/x.corr>jetptcut, jets)
+            elif (_var==1): jets = filter(lambda x : x.pt_jesTotalUp>jetptcut, jets)
+            elif (_var==-1): jets = filter(lambda x : x.pt_jesTotalDown>jetptcut, jets)
             if (_var==0): jetcorr = [1 for x in jets]
-            elif (_var==1): jetcorr = [x.corr_JECUp/x.corr for x in jets]
-            elif (_var==-1): jetcorr = [x.corr_JECDown/x.corr for x in jets]
+            elif (_var==1): jetcorr = [ x.pt_jesTotalUp/x.pt for x in jets]
+            elif (_var==-1): jetcorr = [ x.pt_jesTotalDown/x.pt for x in jets]
             jetscoll[_var]=(jets,jetcorr)
 
         for syst in self.btag_systs:
@@ -75,7 +83,10 @@ class BTagEventWeightFriend:
                 weight *= self.reader.get_SF(pt=jet.pt*jetcorr[i], eta=jet.eta,
                                       flavor=jet.hadronFlavour, val=getattr(jet,self.discrname),
                                       syst=syst)
+            self.wrappedOutputTree.fillBranch(label,weight)
             ret[label] = weight
-
+#        print ret
         return ret
 
+#    def analyze(self, event):
+#        return True

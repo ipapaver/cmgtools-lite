@@ -1,0 +1,23 @@
+## TChiWZ Signal Points
+---------------------------------------
+incl_signal	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-signal.txt"
+
+## Prompt bkg
+---------------------------------------
+incl_prompt	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-prompt.txt"
+
+## Non prompt bkg
+---------------------------------------
+incl_mcfakes	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-mcfakes.txt"
+
+## Rares bkg
+---------------------------------------
+incl_rares	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-rares.txt"
+
+## Conversions bkg
+---------------------------------------
+incl_convs	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-3l-convs.txt"
+
+## Data
+---------------------------------------
+incl_data	: + ; IncludeMca="susy-sos/mca-includes/2016/mca-data.txt"

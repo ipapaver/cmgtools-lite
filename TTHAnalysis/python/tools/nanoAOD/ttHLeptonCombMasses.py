@@ -6,7 +6,7 @@ class ttHLeptonCombMasses( Module ):
         self.leptonsAndSels = leptonsAndSels[:]
         self.maxLeps = maxLeps
         self.postfix = postfix
-        self.branches = [ 'm2l', 'pt2l', 'm3l','m4l', 'mZ1', 'mZ1SFSS', 'mZ2', 'mZZ', 'minMllSFOS', 'maxMllSFOS', 'minMllAFOS','minMllAFAS' ]
+        self.branches = [ 'm2l', 'm3l','m4l', 'mZ1', 'mZ1SFSS', 'mZ2', 'mZZ', 'minMllSFOS', 'maxMllSFOS', 'minMllAFOS','minMllAFAS' ]
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.wrappedOutputTree = wrappedOutputTree
@@ -23,7 +23,6 @@ class ttHLeptonCombMasses( Module ):
         nlep = len(leps)
 
         self.wrappedOutputTree.fillBranch('m2l'+self.postfix, (leps[0].p4() + leps[1].p4()).M() if nlep >= 2 else 0)
-        self.wrappedOutputTree.fillBranch('pt2l'+self.postfix, (leps[0].p4() + leps[1].p4()).pt() if nlep >= 2 else 0)
         self.wrappedOutputTree.fillBranch('m3l'+self.postfix, (leps[0].p4() + leps[1].p4() + leps[2].p4()).M() if nlep >= 3 else 0)
         self.wrappedOutputTree.fillBranch('m4l'+self.postfix, (leps[0].p4() + leps[1].p4() + leps[2].p4() + leps[3].p4()).M() if nlep >= 4 else 0)
 

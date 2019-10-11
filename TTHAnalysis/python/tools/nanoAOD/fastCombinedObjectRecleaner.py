@@ -1,5 +1,5 @@
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module 
-
+import types
 
 from CMGTools.TTHAnalysis.tools.collectionSkimmer import CollectionSkimmer
 from CMGTools.TTHAnalysis.tools.nanoAOD.friendVariableProducerTools import declareOutput
@@ -20,6 +20,8 @@ class fastCombinedObjectRecleaner(Module):
         self.jetPts = jetPts
         self.jetPtsFwd = jetPtsFwd
         self.jetBTag = jetBTag
+#        self.btagL_thr = btagL_thr
+#        self.btagM_thr = btagM_thr
         self.btagL_thr = btagL_thr
         self.btagM_thr = btagM_thr
         self.doVetoZ = doVetoZ
@@ -55,29 +57,29 @@ class fastCombinedObjectRecleaner(Module):
         self.branches.extend([(var+self.label,_type) for var,_type in self.outjetvars])
         self.branches += [("LepGood_conePt","F",100,"nLepGood")]
 
-        self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=10, saveSelectedIndices=True,padSelectedIndicesWith=0)
+        self._helper_lepsF = CollectionSkimmer("LepFO"+self.label, "LepGood", floats=[], maxSize=10, saveTagForAll=True, saveSelectedIndices=True,padSelectedIndicesWith=0)
         self._helper_lepsT = CollectionSkimmer("LepTight"+self.label, "LepGood", floats=[], maxSize=10, saveTagForAll=True)
         self._helper_taus = CollectionSkimmer("TauSel"+self.label, self.tauc, floats=self.vars+self.vars_taus, ints=self.vars_taus_int, uchars=self.vars_taus_uchar, maxSize=10)
         self._helper_jets = CollectionSkimmer("%sSel"%self.jc+self.label, self.jc, floats=self.vars+self.vars_jets, ints=self.vars_jets_int, maxSize=20)
         self._helpers = [self._helper_lepsF,self._helper_lepsT,self._helper_taus,self._helper_jets]
 
-        if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ recleaner worker module"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
-        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,self.btagL_thr,self.btagM_thr, True)
-        for x in self.jetPts: self._worker.addJetPt(x)
-        self._worker.setFwdPt(self.jetPtsFwd[0], self.jetPtsFwd[1])
-
-        if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
-            print "Load C++ recleaner mass and veto calculator module"
-            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerMassVetoCalculator.cxx+O" % os.environ['CMSSW_BASE'])
-        self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(self._helper_lepsF.cppImpl(),self._helper_lepsT.cppImpl(),self.doVetoZ,self.doVetoLMf,self.doVetoLMt)
+##        if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
+##            print "Load C++ recleaner worker module"
+##            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
+##        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,self.btagL_thr,self.btagM_thr, True)
+##        for x in self.jetPts: self._worker.addJetPt(x)
+##        self._worker.setFwdPt(self.jetPtsFwd[0], self.jetPtsFwd[1])
+##
+##        if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
+##            print "Load C++ recleaner mass and veto calculator module"
+##            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerMassVetoCalculator.cxx+O" % os.environ['CMSSW_BASE'])
+##        self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(self._helper_lepsF.cppImpl(),self._helper_lepsT.cppImpl(),self.doVetoZ,self.doVetoLMf,self.doVetoLMt)
 
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         for x in self._helpers:
             x.initInputTree(inputTree)
         self.initReaders(inputTree)
-        self.initWorkers()
+#        self.initWorkers(self.btagL_thr,self.btagM_thr)
         declareOutput(self, wrappedOutputTree, self.branches)
         for x in self._helpers: 
             x.initOutputTree(wrappedOutputTree.tree(), True);
@@ -94,7 +96,19 @@ class fastCombinedObjectRecleaner(Module):
                 setattr(self,"%s_%s"%(coll,B), tree.arrayReader("%s_%s"%(coll,B)))
         return True
 
-    def initWorkers(self):
+    def initWorkers(self,wpL,wpM):
+        if "/fastCombinedObjectRecleanerHelper_cxx.so" not in ROOT.gSystem.GetLibraries():
+            print "Load C++ recleaner worker module"
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerHelper.cxx+O" % os.environ['CMSSW_BASE'])
+        self._worker = ROOT.fastCombinedObjectRecleanerHelper(self._helper_taus.cppImpl(),self._helper_jets.cppImpl(),self.cleanJetsWithFOTaus,wpL,wpM, True)
+        for x in self.jetPts: self._worker.addJetPt(x)
+        self._worker.setFwdPt(self.jetPtsFwd[0], self.jetPtsFwd[1])
+
+        if "/fastCombinedObjectRecleanerMassVetoCalculator_cxx.so" not in ROOT.gSystem.GetLibraries():
+            print "Load C++ recleaner mass and veto calculator module"
+            ROOT.gROOT.ProcessLine(".L %s/src/CMGTools/TTHAnalysis/python/tools/fastCombinedObjectRecleanerMassVetoCalculator.cxx+O" % os.environ['CMSSW_BASE'])
+        self._workerMV = ROOT.fastCombinedObjectRecleanerMassVetoCalculator(self._helper_lepsF.cppImpl(),self._helper_lepsT.cppImpl(),self.doVetoZ,self.doVetoLMf,self.doVetoLMt)
+
         self._worker.setLeptons(self.nLepGood, self.LepGood_pt, self.LepGood_eta, self.LepGood_phi, self.LepGood_jetIdx)
         self._worker.setTaus(getattr(self,'n%s'%self.tauc),getattr(self,'%s_pt'%self.tauc),getattr(self,'%s_eta'%self.tauc),getattr(self,'%s_phi'%self.tauc), getattr(self,'%s_jetIdx'%self.tauc))
         self._worker.setJets(getattr(self,'n%s'%self.jc),getattr(self,'%s_pt'%self.jc),getattr(self,'%s_eta'%self.jc),getattr(self,'%s_phi'%self.jc),
@@ -103,12 +117,15 @@ class fastCombinedObjectRecleaner(Module):
 
     def analyze(self, event):
         # Init
-        wpL = self.btagL_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1]
-        wpM = self.btagM_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1]
+        year = event.year
+        # wpL = self.btagL_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1]
+        # wpM = self.btagM_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1]
+        wpL = self.btagL_thr(year) if type(self.btagL_thr) is types.LambdaType else self.btagL_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"L")][1]
+        wpM = self.btagM_thr(year) if type(self.btagM_thr) is types.LambdaType else self.btagM_thr #_btagWPs["DeepFlav_%d_%s"%(event.year,"M")][1]      
         if self._ttreereaderversion != event._tree._ttreereaderversion:
             for x in self._helpers: x.initInputTree(event._tree)
             self.initReaders(event._tree)
-            self.initWorkers()
+            self.initWorkers(wpL,wpM)
 
         for x in self._helpers: x.clear()
 
