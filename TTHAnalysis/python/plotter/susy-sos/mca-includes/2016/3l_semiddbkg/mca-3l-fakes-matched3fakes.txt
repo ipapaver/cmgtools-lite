@@ -18,7 +18,7 @@ fakes_matched3fake_dy      : DYJetsToLL_M5to50_HT400to600       : xsec : (LepGoo
 fakes_matched3fake_dy      : DYJetsToLL_M5to50_HT600toInf       : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kCyan-2, Lable="DY(fakes)"
 
 #fakes_matched3fake_wj        : WJetsToLNu_LO                      : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1
-Fakes_wj_3F      : WJetsToLNu_HT70to100               : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1, Label="Wj(fakes)"
+fakes_matched3fake_wj      : WJetsToLNu_HT70to100               : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1, Label="Wj(fakes)"
 fakes_matched3fake_wj      : WJetsToLNu_HT100to200              : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1, Label="Wj(fakes)"
 fakes_matched3fake_wj      : WJetsToLNu_HT200to400              : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1, Label="Wj(fakes)"
 fakes_matched3fake_wj      : WJetsToLNu_HT400to600              : xsec : (LepGood1_mcMatchId==0 && LepGood2_mcMatchId==0 && LepGood3_mcMatchedId==0) ; FillColor=ROOT.kGray+1, Label="Wj(fakes)"

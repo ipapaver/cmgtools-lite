@@ -1,0 +1,29 @@
+## TChiWZ Signal Points
+---------------------------------------
+incl_signal	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-signal.txt"
+
+## Prompt bkg
+---------------------------------------
+incl_prompt	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-prompt.txt"
+
+## Non prompt bkg
+---------------------------------------
+## Semi dd bkg -- step 1: matching in sidebands
+##
+incl_fakes_matched1fake : + ; IncludeMca="susy-sos/mca-includes/2018/3l_semiddbkg/mca-3l-fakes-matched1fakes.txt", AddWeight="ScaleFactor1F"
+incl_fakes_matched2fake : + ; IncludeMca="susy-sos/mca-includes/2018/3l_semiddbkg/mca-3l-fakes-matched2fakes.txt", AddWeight="ScaleFactor2F"
+incl_fakes_matched3fake : + ; IncludeMca="susy-sos/mca-includes/2018/3l_semiddbkg/mca-3l-fakes-matched3fakes.txt", AddWeight="ScaleFactor3F"
+
+
+
+## Rares bkg
+---------------------------------------
+incl_rares	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-rares.txt"
+
+## Conversions bkg
+---------------------------------------
+incl_convs	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-3l-convs.txt"
+
+## Data
+---------------------------------------
+incl_data	: + ; IncludeMca="susy-sos/mca-includes/2018/mca-data.txt"
