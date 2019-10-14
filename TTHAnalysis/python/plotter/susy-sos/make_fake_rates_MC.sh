@@ -25,7 +25,7 @@ susy)
 esac;
 
 
-BCORE=" --s2v --tree ${TREE} susy-sos-v2-clean/lepton-fr/lepton_mca${YEAR}_frstudies_LFMatch3.txt susy-sos-v2-clean/lepton-fr/sos_fr_den.txt"
+BCORE=" --s2v --tree ${TREE} susy-sos/lepton-fr/lepton_mca${YEAR}_frstudies_LFMatch3.txt susy-sos/lepton-fr/sos_fr_den.txt"
 BCORE="${BCORE} --Fs /eos/cms/store/cmst3/user/vtavolar/susySOS/friends_fromv5/$YEAR/recleaner_mc_new/"
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'"
 PLOTTER="python mcPlots.py $BCORE   "
@@ -39,9 +39,9 @@ BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" -j 4 & "; shift; fi
 #if [[ "$LEPTON" == "muon" ]]; then Num='muon_tight'; else Num='ele_tight'; fi;
 
 
-B0="$BASE -P $T  susy-sos-v2-clean/lepton-fr/sos_fr_num.txt susy-sos-v2-clean/lepton-fr/make_fake_rates_xvars.txt --groupBy cut " 
+B0="$BASE -P $T  susy-sos/lepton-fr/sos_fr_num.txt susy-sos/lepton-fr/make_fake_rates_xvars.txt --groupBy cut " 
 B0="$B0" #--showRatio --ratioRange 0.00 1.99   --yrange 0 0.35 " 
-B1="${PLOTTER} -P $T susy-sos-v2-clean/lepton-fr/make_fake_rates_plots.txt"
+B1="${PLOTTER} -P $T susy-sos/lepton-fr/make_fake_rates_plots.txt"
 B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
 XVAR2="'pt_fine_30'"
 XVAR1="'pt_fine'"
