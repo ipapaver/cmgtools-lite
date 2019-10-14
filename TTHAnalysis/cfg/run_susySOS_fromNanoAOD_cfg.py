@@ -132,14 +132,14 @@ if year == 2018:
     elif analysis == "frqcd":
         mcSamples = byCompName(mcSamples_, [
             "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170|300)to.*_Mu5"
-            #"QCD_HT(100|200|300|500)",
-            #"QCD_Pt(15|20|30|50|80|120|170)to.*_EMs.*",  
-            #"QCD_Pt(20|30|50|80|120|170|250)to.*_bcToE.*",        
-            #"WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+            "QCD_HT(100|200|300|500)",
+            "QCD_Pt(15|20|30|50|80|120|170)to.*_EMs.*",  
+            "QCD_Pt(20|30|50|80|120|170|250)to.*_bcToE.*",        
+            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
         ])
-        #DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
-        #DatasetsAndTriggers.append( ("EGamma",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
-        #DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+        DatasetsAndTriggers.append( ("EGamma",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 elif year == 2017:
     if analysis == 'main':
@@ -226,17 +226,17 @@ elif year == 2017:
 
     elif analysis == "frqcd":
      mcSamples = byCompName(mcSamples_, [
-         #"QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
-         "QCD_Pt(20)to.*_Mu5" #|30|50|80|120|170)to.*_Mu5",
-         #"QCD_HT(100|200|300|500)",
-         #Missing Pt170to300 EMEnriched
-         #"QCD_Pt(20|30|50|80|120|300)to.*_EMEnriched.*", 
-         #"QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
-         #"WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+         "QCD_Pt(20||30|50|80|120|170)to.*_Mu5",
+         "QCD_HT(100|200|300|500)",
+         Missing Pt170to300 EMEnriched
+         "QCD_Pt(20|30|50|80|120|300)to.*_EMEnriched.*", 
+         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
+         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
      ])
-     #DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
-     #DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1mu_noiso"] + triggers["FR_1e_iso"]) )
-     #DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+     DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+     DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1mu_noiso"] + triggers["FR_1e_iso"]) )
+     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 elif year == 2016:
     if analysis == 'main':
@@ -477,9 +477,9 @@ process.nanoAOD_step.insert(0, process.skim1El)
 
 cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
 
-if analysis == "frqcd":
+#if analysis == "frqcd":
 #    cropToLumi(selectedComponents, 1)
-    cropToLumi(byCompName(selectedComponents,["QCD"]), 3)
+#    cropToLumi(byCompName(selectedComponents,["QCD"]), 3)
 
 
 # print summary of components to process

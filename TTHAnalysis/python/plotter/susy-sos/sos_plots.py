@@ -50,7 +50,7 @@ submit = '{command}'
 
 P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_230819_v5/"
 nCores = 8
-TREESALL = " --Fs {P}/recleaner -P "+P0+"%s "%(YEAR,)
+TREESALL = " --Fs {P}/recleaner --FMCs /eos/cms/store/cmst3/user/vtavolar/susySOS/friends_fromv5/%s/bTagWeights/ -P "%(YEAR)+P0+"%s "%(YEAR,)
 
 def base(selection):
     CORE=TREESALL
@@ -75,12 +75,12 @@ def base(selection):
          
 
          if YEAR == "2016":
-             wBG = " 'puWeight' " #" 'getLepSF_16(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_16(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*triggerSFfullsim(LepGood1_pt, LepGood1_eta, LepGood2_pt, LepGood2_eta, MET_pt, metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt,LepGood2_phi, MET_pt, MET_phi))' " #bTagWeight
+             wBG = " 'puWeight*eventBTagSF' " #" 'getLepSF_16(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_16(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*triggerSFfullsim(LepGood1_pt, LepGood1_eta, LepGood2_pt, LepGood2_eta, MET_pt, metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt,LepGood2_phi, MET_pt, MET_phi))' " #bTagWeight
              #wFS = " 'getLepSFFS(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSFFS(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*ISREwkCor*bTagWeightFS*triggerEff(LepGood1_pt, LepGood1_eta, LepGood2_pt,LepGood2_eta, MET_pt, metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi))' "
          elif YEAR == "2017": 
-             wBG = " 'puWeight' " #" 'getLepSF_17(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_17(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)' "
+             wBG = " 'puWeight*eventBTagSF' " #" 'getLepSF_17(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_17(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)' "
          elif YEAR == "2018":
-             wBG = " 'puWeight' "
+             wBG = " 'puWeight*eventBTagSF' "
          GO="%s -W %s"%(GO,wBG)
 
          if args.doWhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
@@ -260,26 +260,26 @@ if __name__ == '__main__':
         x = base('3l')
         x = binYearChoice(x,torun,YEAR)
         if 'sr_ddbkg' in torun:
-           x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))    
+            x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))    
         if 'appl' in torun:
             if '_step1' in torun:
                 x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-semidd-step1.txt"%(YEAR, YEAR, YEAR, YEAR))
-                    if '_1F' in torun:
-                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
-                    if '_2F' in torun:
-                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
-                    if '_3F' in torun:
-                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
-                    if '_incl' in torun:
-                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.* --sP fakes_matched3fake_.*")
+                if '_1F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_2F' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_3F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_incl' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.* --sP fakes_matched3fake_.*")
             if '_step2' in torun:
                 x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-semidd-step2.txt"%(YEAR, YEAR, YEAR, YEAR))
-                    if '_1F' in torun:
-                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
-                    if '_2F' in torun:
-                        x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.*")
-                    if '_3F' in torun:
-                        x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
+                if '_1F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
+                if '_2F' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.*")
+                if '_3F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
             x = add(x,"-X ^threeTight$ ")
             x = add(x,"-E ^oneNotTight$ ")
 
