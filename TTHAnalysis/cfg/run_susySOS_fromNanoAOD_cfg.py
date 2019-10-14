@@ -9,7 +9,7 @@ def byCompName(components, regexps):
     return [ c for c in components if any(re.match(r, c.name) for r in regexps) ]
 
 year = int(getHeppyOption("year", "2018"))
-analysis = getHeppyOption("analysis", "main")
+analysis = getHeppyOption("analysis", "frqcd")
 preprocessor = getHeppyOption("nanoPreProcessor")
 
 if getHeppyOption("nanoPreProcessor"):
@@ -129,211 +129,252 @@ if year == 2018:
 ##        DatasetsAndTriggers.append( ("SingleMuon", triggers["1mu_iso"]) ) ##which one?? ##PD SingleMuon o MET?
 ##conf db e cercare stream dato il nome del trigger
 
+    elif analysis == "frqcd":
+        mcSamples = byCompName(mcSamples_, [
+            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170|300)to.*_Mu5"
+            "QCD_HT(100|200|300|500)",
+            "QCD_Pt(15|20|30|50|80|120|170)to.*_EMs.*",  
+            "QCD_Pt(20|30|50|80|120|170|250)to.*_bcToE.*",        
+            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+        ])
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+        DatasetsAndTriggers.append( ("EGamma",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+
 elif year == 2017:
-    mcSamples = byCompName(mcSamples_, [
-        "DYJetsToLL_M10to50_LO_ext"
-##        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
+    if analysis == 'main':
+        mcSamples = byCompName(mcSamples_, [
+            "DYJetsToLL_M10to50_LO_ext"
+##          "DYJetsToLL_M50$", "TT(Lep|Semi)_pow", "TTHnobb_pow",
 
-        ##main bkgs
-        "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
+            ##main bkgs
+            "T_tWch_noFullyHad", "TBar_tWch_noFullyHad",
 
-        #"DYJetsToLL_M4to50_HT70to100," #Sample status = INVALID on DAS
-        #"DYJetsToLL_M4to50_HT70to100_ext1", #Sample status = INVALID on DAS
-        "DYJetsToLL_M4to50_HT100to200", 
-        "DYJetsToLL_M4to50_HT100to200_ext1",
-        "DYJetsToLL_M4to50_HT200to400",
-        "DYJetsToLL_M4to50_HT200to400_ext1",
-        "DYJetsToLL_M4to50_HT400to600",
-        "DYJetsToLL_M4to50_HT400to600_ext1",
-        "DYJetsToLL_M4to50_HT600toInf",
+            #"DYJetsToLL_M4to50_HT70to100," #Sample status = INVALID on DAS
+            #"DYJetsToLL_M4to50_HT70to100_ext1", #Sample status = INVALID on DAS
+            "DYJetsToLL_M4to50_HT100to200", 
+            "DYJetsToLL_M4to50_HT100to200_ext1",
+            "DYJetsToLL_M4to50_HT200to400",
+            "DYJetsToLL_M4to50_HT200to400_ext1",
+            "DYJetsToLL_M4to50_HT400to600",
+            "DYJetsToLL_M4to50_HT400to600_ext1",
+            "DYJetsToLL_M4to50_HT600toInf",
+    
+            "DYJetsToLL_M50_HT100to200", 
+            "DYJetsToLL_M50_HT100to200_ext1",
+            "DYJetsToLL_M50_HT200to400",
+            "DYJetsToLL_M50_HT200to400_ext1",
+            "DYJetsToLL_M50_HT400to600",
+            "DYJetsToLL_M50_HT400to600_ext1",
+            "DYJetsToLL_M50_HT600to800",
+            "DYJetsToLL_M50_HT800to1200",
+            "DYJetsToLL_M50_HT1200to2500",
+            "DYJetsToLL_M50_HT2500toInf",
+    
+            "TTJets_DiLepton",
+    
+            #main VV
+            "WWTo2L2Nu",
+            "ZZTo2L2Nu",
+    
+            #fakesbkg
+            "TTJets_SingleLeptonFromT",
+            "TTJets_SingleLeptonFromTbar",
+    
+            "WJetsToLNu_HT100to200",
+            "WJetsToLNu_HT200to400",
+            "WJetsToLNu_HT400to600",
+            "WJetsToLNu_HT600to800",
+            "WJetsToLNu_HT800to1200",
+            "WJetsToLNu_HT1200to2500",
+            "WJetsToLNu_HT2500toInf",
+    
+            #rarebkg
+            "WZTo3LNu_fxfx",
+            "WWToLNuQQ",
+            "WZTo1L1Nu2Q",
+            "ZZTo4L",
+            "WWW", #_4F
+            "WZZ",
+            "WWZ", #_4F
+            "ZZZ",
+            "T_tch",
+            "TBar_tch",
+            "T_sch_lep",
+            "WWTo2L2Nu_DPS_hpp",
+            "TTWToLNu_fxfx",
+            "TTZToLLNuNu_amc",
+            "TTZToLLNuNu_m1to10",
+            "TTGJets",
+            "TGJets_lep",
 
-        "DYJetsToLL_M50_HT100to200", 
-        "DYJetsToLL_M50_HT100to200_ext1",
-        "DYJetsToLL_M50_HT200to400",
-        "DYJetsToLL_M50_HT200to400_ext1",
-        "DYJetsToLL_M50_HT400to600",
-        "DYJetsToLL_M50_HT400to600_ext1",
-        "DYJetsToLL_M50_HT600to800",
-        "DYJetsToLL_M50_HT800to1200",
-        "DYJetsToLL_M50_HT1200to2500",
-        "DYJetsToLL_M50_HT2500toInf",
-
-        "TTJets_DiLepton",
-
-        #main VV
-        "WWTo2L2Nu",
-        "ZZTo2L2Nu",
-
-        #fakesbkg
-        "TTJets_SingleLeptonFromT",
-        "TTJets_SingleLeptonFromTbar",
-
-        "WJetsToLNu_HT100to200",
-        "WJetsToLNu_HT200to400",
-        "WJetsToLNu_HT400to600",
-        "WJetsToLNu_HT600to800",
-        "WJetsToLNu_HT800to1200",
-        "WJetsToLNu_HT1200to2500",
-        "WJetsToLNu_HT2500toInf",
-
-        #rarebkg
-        "WZTo3LNu_fxfx",
-        "WWToLNuQQ",
-        "WZTo1L1Nu2Q",
-        "ZZTo4L",
-        "WWW", #_4F
-        "WZZ",
-        "WWZ", #_4F
-        "ZZZ",
-        "T_tch",
-        "TBar_tch",
-        "T_sch_lep",
-        "WWTo2L2Nu_DPS_hpp",
-        "TTWToLNu_fxfx",
-        "TTZToLLNuNu_amc",
-        "TTZToLLNuNu_m1to10",
-        "TTGJets",
-        "TGJets_lep",
-
-#more to be included
-#            "ZZTo2L2Q",
+#           more to be included
+#           "ZZTo2L2Q",
             "WpWpJJ",
-#            "WZTo1L3Nu",
-#            "WGToLNuG_amcatnlo_ext",
-#            "ZGTo2LG_ext",
-#            "WZTo2L2Q",
+#           "WZTo1L3Nu",
+#           "WGToLNuG_amcatnlo_ext",
+#           "ZGTo2LG_ext",
+#           "WZTo2L2Q",
 
 
-        ##signal SUSY
-        "SMS_TChiWZ"
+            ##signal SUSY
+            "SMS_TChiWZ"
+    
+        ])
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
+        DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
 
-    ])
-
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
-    DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
+    elif analysis == "frqcd":
+     mcSamples = byCompName(mcSamples_, [
+         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
+         "QCD_Pt(20||30|50|80|120|170)to.*_Mu5",
+         "QCD_HT(100|200|300|500)",
+         Missing Pt170to300 EMEnriched
+         "QCD_Pt(20|30|50|80|120|300)to.*_EMEnriched.*", 
+         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
+         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+     ])
+     DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+     DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1mu_noiso"] + triggers["FR_1e_iso"]) )
+     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 elif year == 2016:
-    mcSamples = byCompName(mcSamples_, [
-        "DYJetsToLL_M10to50_LO$"
-
-        ##main bkgs
-        "T_tWch_noFullyHad", #extensions are to be included?
-        "TBar_tWch_noFullyHad",
-
-        "DYJetsToLL_M5to50_HT100to200",
-        "DYJetsToLL_M5to50_HT100to200_ext",
-        "DYJetsToLL_M5to50_HT200to400",
-        "DYJetsToLL_M5to50_HT200to400_ext",
-        "DYJetsToLL_M5to50_HT400to600",
-        "DYJetsToLL_M5to50_HT400to600_ext",
-        "DYJetsToLL_M5to50_HT600toInf",
-        "DYJetsToLL_M5to50_HT600toInf_ext",
-##        "DYJetsToLL_M4to50_HT70to100", 
-##        "DYJetsToLL_M4to50_HT70to100_ext1",
-##        "DYJetsToLL_M4to50_HT100to200", 
-##        "DYJetsToLL_M4to50_HT100to200_ext1",
-##        "DYJetsToLL_M4to50_HT200to400",
-##        "DYJetsToLL_M4to50_HT200to400_ext1",
-##        "DYJetsToLL_M4to50_HT400to600",
-##        "DYJetsToLL_M4to50_HT400to600_ext1",
-##        "DYJetsToLL_M4to50_HT600toInf",
-
-
-        "DYJetsToLL_M50_HT70to100", 
-        "DYJetsToLL_M50_HT100to200",
-        "DYJetsToLL_M50_HT100to200_ext",
-        "DYJetsToLL_M50_HT200to400",
-        "DYJetsToLL_M50_HT200to400_ext",
-        "DYJetsToLL_M50_HT400to600",
-        "DYJetsToLL_M50_HT400to600_ext",
-        "DYJetsToLL_M50_HT600to800",
-        "DYJetsToLL_M50_HT800to1200",
-        "DYJetsToLL_M50_HT1200to2500",
-        "DYJetsToLL_M50_HT2500toInf",
-#        "DYJetsToLL_M50_HT100to200", 
-#        "DYJetsToLL_M50_HT100to200_ext1",
-#        "DYJetsToLL_M50_HT200to400",
-#        "DYJetsToLL_M50_HT200to400_ext1",
-#        "DYJetsToLL_M50_HT400to600",
-#        "DYJetsToLL_M50_HT400to600_ext1",
-#        "DYJetsToLL_M50_HT600to800",
-#        "DYJetsToLL_M50_HT800to1200",
-#        "DYJetsToLL_M50_HT1200to2500",
-#        "DYJetsToLL_M50_HT2500toInf",
-
-        "TTJets_DiLepton",
-
-        #main VV
-        "WWTo2L2Nu",
-        "ZZTo2L2Nu",
-
-        #fakesbkg
-        "TTJets_SingleLeptonFromT",
-        "TTJets_SingleLeptonFromTbar",
-
-        "WJetsToLNu_HT70to100",
-        "WJetsToLNu_HT100to200",
-        "WJetsToLNu_HT100to200_ext",
-        "WJetsToLNu_HT100to200_ext2",
-        "WJetsToLNu_HT200to400",
-        "WJetsToLNu_HT200to400_ext",
-        "WJetsToLNu_HT200to400_ext2",
-        "WJetsToLNu_HT400to600",
-        "WJetsToLNu_HT400to600_ext",
-        "WJetsToLNu_HT600to800",
-        "WJetsToLNu_HT600to800_ext",
-        "WJetsToLNu_HT800to1200",
-        "WJetsToLNu_HT800to1200_ext",
-        "WJetsToLNu_HT1200to2500",
-        "WJetsToLNu_HT1200to2500_ext",
-        "WJetsToLNu_HT2500toInf",
-        "WJetsToLNu_HT2500toInf_ext",
-##        "WJetsToLNu_HT100to200",
-##        "WJetsToLNu_HT200to400",
-##        "WJetsToLNu_HT400to600",
-##        "WJetsToLNu_HT600to800",
-##        "WJetsToLNu_HT800to1200",
-##        "WJetsToLNu_HT1200to2500",
-##        "WJetsToLNu_HT2500toInf",
-
-        #rarebkg
-        "WZTo3LNu_fxfx",
-        "WWToLNuQQ",
-        "WZTo1L1Nu2Q",
-        "ZZTo4L",
-        "WWW", #_4F
-        "WZZ",
-        "WWZ", #why not _4F?
-        "ZZZ",
-        "T_tch",
-        "TBar_tch",
-        "T_sch_lep",
-##        "WWTo2L2Nu_DPS_hpp", #missing
-        "TTWToLNu", "TTWToLNu_ext",  #_fxfx
-        "TTZToLLNuNu", "TTZToLLNuNu_ext", "TTZToLLNuNu_ext2", #_amc
-        "TTZToLLNuNu_m1to10",
-        "TTGJets", "TTGJets_ext"
-       # "TGJets_lep" #missing
-
-#more to be included
-        "ZZTo2L2Q", 
-        "WpWpJJ",
-        "WZTo1L3Nu",
-        "WGToLNuG_amcatnlo",
-        "WGToLNuG_amcatnlo_ext",
-        "ZGTo2LG",
-        "WZTo2L2Q",
-
-
-        ##signal SUSY
-        "SMS_TChiWZ"
-
-###        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
-    ])
-    DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
-    DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
+    if analysis == 'main':
+        mcSamples = byCompName(mcSamples_, [
+           "DYJetsToLL_M10to50_LO$"
+   
+           ##main bkgs
+           "T_tWch_noFullyHad", #extensions are to be included?
+           "TBar_tWch_noFullyHad",
+   
+           "DYJetsToLL_M5to50_HT100to200",
+           "DYJetsToLL_M5to50_HT100to200_ext",
+           "DYJetsToLL_M5to50_HT200to400",
+           "DYJetsToLL_M5to50_HT200to400_ext",
+           "DYJetsToLL_M5to50_HT400to600",
+           "DYJetsToLL_M5to50_HT400to600_ext",
+           "DYJetsToLL_M5to50_HT600toInf",
+           "DYJetsToLL_M5to50_HT600toInf_ext",
+   ##        "DYJetsToLL_M4to50_HT70to100", 
+   ##        "DYJetsToLL_M4to50_HT70to100_ext1",
+   ##        "DYJetsToLL_M4to50_HT100to200", 
+   ##        "DYJetsToLL_M4to50_HT100to200_ext1",
+   ##        "DYJetsToLL_M4to50_HT200to400",
+   ##        "DYJetsToLL_M4to50_HT200to400_ext1",
+   ##        "DYJetsToLL_M4to50_HT400to600",
+   ##        "DYJetsToLL_M4to50_HT400to600_ext1",
+   ##        "DYJetsToLL_M4to50_HT600toInf",
+   
+   
+           "DYJetsToLL_M50_HT70to100", 
+           "DYJetsToLL_M50_HT100to200",
+           "DYJetsToLL_M50_HT100to200_ext",
+           "DYJetsToLL_M50_HT200to400",
+           "DYJetsToLL_M50_HT200to400_ext",
+           "DYJetsToLL_M50_HT400to600",
+           "DYJetsToLL_M50_HT400to600_ext",
+           "DYJetsToLL_M50_HT600to800",
+           "DYJetsToLL_M50_HT800to1200",
+           "DYJetsToLL_M50_HT1200to2500",
+           "DYJetsToLL_M50_HT2500toInf",
+   #        "DYJetsToLL_M50_HT100to200", 
+   #        "DYJetsToLL_M50_HT100to200_ext1",
+   #        "DYJetsToLL_M50_HT200to400",
+   #        "DYJetsToLL_M50_HT200to400_ext1",
+   #        "DYJetsToLL_M50_HT400to600",
+   #        "DYJetsToLL_M50_HT400to600_ext1",
+   #        "DYJetsToLL_M50_HT600to800",
+   #        "DYJetsToLL_M50_HT800to1200",
+   #        "DYJetsToLL_M50_HT1200to2500",
+   #        "DYJetsToLL_M50_HT2500toInf",
+   
+           "TTJets_DiLepton",
+   
+           #main VV
+           "WWTo2L2Nu",
+           "ZZTo2L2Nu",
+   
+           #fakesbkg
+           "TTJets_SingleLeptonFromT",
+           "TTJets_SingleLeptonFromTbar",
+   
+           "WJetsToLNu_HT70to100",
+           "WJetsToLNu_HT100to200",
+           "WJetsToLNu_HT100to200_ext",
+           "WJetsToLNu_HT100to200_ext2",
+           "WJetsToLNu_HT200to400",
+           "WJetsToLNu_HT200to400_ext",
+           "WJetsToLNu_HT200to400_ext2",
+           "WJetsToLNu_HT400to600",
+           "WJetsToLNu_HT400to600_ext",
+           "WJetsToLNu_HT600to800",
+           "WJetsToLNu_HT600to800_ext",
+           "WJetsToLNu_HT800to1200",
+           "WJetsToLNu_HT800to1200_ext",
+           "WJetsToLNu_HT1200to2500",
+           "WJetsToLNu_HT1200to2500_ext",
+           "WJetsToLNu_HT2500toInf",
+           "WJetsToLNu_HT2500toInf_ext",
+   ##        "WJetsToLNu_HT100to200",
+   ##        "WJetsToLNu_HT200to400",
+   ##        "WJetsToLNu_HT400to600",
+   ##        "WJetsToLNu_HT600to800",
+   ##        "WJetsToLNu_HT800to1200",
+   ##        "WJetsToLNu_HT1200to2500",
+   ##        "WJetsToLNu_HT2500toInf",
+   
+           #rarebkg
+           "WZTo3LNu_fxfx",
+           "WWToLNuQQ",
+           "WZTo1L1Nu2Q",
+           "ZZTo4L",
+           "WWW", #_4F
+           "WZZ",
+           "WWZ", #why not _4F?
+           "ZZZ",
+           "T_tch",
+           "TBar_tch",
+           "T_sch_lep",
+   ##        "WWTo2L2Nu_DPS_hpp", #missing
+           "TTWToLNu", "TTWToLNu_ext",  #_fxfx
+           "TTZToLLNuNu", "TTZToLLNuNu_ext", "TTZToLLNuNu_ext2", #_amc
+           "TTZToLLNuNu_m1to10",
+           "TTGJets", "TTGJets_ext"
+          # "TGJets_lep" #missing
+   
+   #more to be included
+           "ZZTo2L2Q", 
+           "WpWpJJ",
+           "WZTo1L3Nu",
+           "WGToLNuG_amcatnlo",
+           "WGToLNuG_amcatnlo_ext",
+           "ZGTo2LG",
+           "WZTo2L2Q",
+   
+   
+           ##signal SUSY
+           "SMS_TChiWZ"
+   
+   ###        "DYJetsToLL_M50$", "TT(Lep|Semi)_pow" 
+       ])
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["SOS_doublemulowMET"] + triggers["mumu_iso"] + triggers["3mu"]) )
+        DatasetsAndTriggers.append( ("MET",     triggers["SOS_highMET"] ) )
 # make MC
+    elif analysis == "frqcd":
+        mcSamples = byCompName(mcSamples_, [
+         "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5",
+         "QCD_HT(100|200|300|500)",
+         # Could not find QCD EMenriched NANOAODSIM samples
+         #"QCD_Pt(20|30|50|80|120|170)to.*_EMEn.*", 
+         #only this available at the moment
+         "QCD_Pt20to30_EMEnriched",
+         "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"
+         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+          ])
 
+        DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+        DatasetsAndTriggers.append( ("DoubleEG",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
+        DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 print "mcSamples ",mcSamples
 
 mcTriggers = sum((trigs for (pd,trigs) in DatasetsAndTriggers), [])
@@ -363,7 +404,7 @@ if getHeppyOption("nanoPreProcessor"):
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
                    2018: ("mc102X","data102X_ABC","data102X_D")}
-    preproc_cmsswArea = "/afs/cern.ch/user/v/vtavolar/work/SusySOSSW_2_clean/nanoAOD/CMSSW_10_2_15" #MODIFY ACCORDINGLY
+    preproc_cmsswArea = "/afs/cern.ch/work/i/ipapaver/susySOS_nanoAOD_friendProduction/NewFramework_v2_FRntuples/CMSSW_10_2_15" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
         preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True, injectTriggerFilter=True, injectJSON=True)
@@ -411,7 +452,35 @@ process.skimNLeps = cms.EDFilter("PATLeptonCountFilter",
 process.nanoAOD_step.insert(0, cms.Sequence(process.selectEl + process.selectMu + process.skimNLeps))
 """)
 
+    if analysis == "frqcd":
+        for comp in selectedComponents:
+            comp.preprocessor = comp.preprocessor.clone(keepOutput = False, injectTriggerFilter = True, injectJSON = True)
+            if 'Mu' in comp.dataset:
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """
+process.skim1Mu = cms.EDFilter("PATMuonRefSelector",
+    src = cms.InputTag("slimmedMuons"),   
+    cut = cms.string("pt > 3")
+    filter = cms.bool(True),
+)
+process.nanoAOD_step.insert(0, process.skim1Mu)
+""")
+
+            elif 'QCD_Pt' in comp.dataset or "EGamma" in comp.dataset or "SingleElectron" in comp.dataset or "DoubleEG" in comp.dataset:
+                comp.preprocessor = comp.preprocessor.clone(cfgHasFilter = True, inlineCustomize = """   
+process.skim1El = cms.EDFilter("PATElectronRefSelector",
+    src = cms.InputTag("slimmedElectrons"),
+    cut = cms.string("pt > 4.5"), 
+    filter = cms.bool(True),
+)
+process.nanoAOD_step.insert(0, process.skim1El)
+""")
+
 cropToLumi(byCompName(selectedComponents,["T_","TBar_"]),100.)
+
+#if analysis == "frqcd":
+#    cropToLumi(selectedComponents, 1)
+#    cropToLumi(byCompName(selectedComponents,["QCD"]), 3)
+
 
 # print summary of components to process
 if getHeppyOption("justSummary"): 
@@ -424,10 +493,17 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import Pos
 
 modules = susySOS_sequence_step1
 cut = susySOS_skim_cut 
-
 branchsel_in = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/tools/nanoAOD/branchsel_in.txt"
 branchsel_out = None
 compression = "ZLIB:3" #"LZ4:4" #"LZMA:9"
+
+if analysis == 'frqcd':
+    print("Tha analysis is frqcd")
+    modules       = susySOS_sequence_step1_FR
+    cut           = susySOS_skim_cut_FR
+    compression   = "LZMA:9"
+    #branchsel_out = os.environ['CMSSW_BASE']+"/src/CMGTools/TTHAnalysis/python/plotter/susy-sos-v2-clean/qcd1l-skim-ec.txt"
+    branchsel_out = None
 
 POSTPROCESSOR = PostProcessor(None, [], modules = modules,
         cut = cut, prefetch = True, longTermCache = True,

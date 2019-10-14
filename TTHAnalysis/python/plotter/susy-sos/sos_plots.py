@@ -1,379 +1,338 @@
-### Note: modifications needed after ICHEP:
-### puw2016_vtx_13fb(nVert) has been replaced with puw2016_nTrueInt_13fb(nTrueInt)
-### filters are applied only on data 
-
 #!/usr/bin/env python
 import sys
 import re
+import os
+import argparse
 
-ODIR=sys.argv[1]
+helpText = "LEP = '2los', '3los'\n\
+REG = 'sr', 'sr_col', 'cr_dy', 'cr_tt', 'cr_vv', 'cr_ss', 'cr_wz', 'appl', 'appl_col', 'appl_step1_1F', 'appl_step1_2F', 'appl_step1_3F', 'appl_step1_incl', 'appl_step2_1F', 'appl_step2_2F', 'appl_step2_3F', 'appl_step2_incl', 'cr_ss_step3_1F', 'cr_ss_step3_2F', 'cr_ss_step3_3F', 'cr_ss_step3_incl'\n\
+BIN = 'min', 'low', 'med', 'high'"
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
+                                 epilog=helpText)
+parser.add_argument("outDir", help="Choose the output directory.\nOutput will be saved to 'outDir/year/LEP_REG_BIN'")
+parser.add_argument("year", help="Choose the year: '2016', '2017' or '2018'")
+parser.add_argument("--lep", default=None, required=True, help="Choose number of leptons to use (REQUIRED)")
+parser.add_argument("--reg", default=None, required=True, help="Choose region to use (REQUIRED)")
+parser.add_argument("--bin", default=None, required=True, help="Choose bin to use (REQUIRED)")
+parser.add_argument("--signal", action="store_true", default=False, help="Include signal")
+parser.add_argument("--data", action="store_true", default=False, help="Include data")
+parser.add_argument("--norm", action="store_true", default=False, help="Normalize signal to data")
+parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
+parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
+parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
+parser.add_argument("--signalMasses", default=None, help="Select only these signal samples (e.g 'signal_TChiWZ_100_70+'), comma separated. Use only when doing 'cards'")
+parser.add_argument("--doWhat", default="plots", help="Do 'plots' or 'cards'. Default = '%(default)s'")
+args = parser.parse_args()
 
-dowhat = "plots" 
-#dowhat = "dumps" 
-#dowhat = "yields" 
-#dowhat = "limits"
+ODIR=args.outDir
+YEAR=args.year
+conf="%s_%s_%s"%(args.lep,args.reg,args.bin)
+
+if YEAR not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please choose '2016', '2017' or '2018'")
+if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
+if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col","appl_step1_1F", "appl_step1_2F", "appl_step1_3F", "appl_step1_incl", "appl_step2_1F", "appl_step2_2F", "appl_step2_3F", "appl_step2_incl", "appl_step3_1F", "appl_step3_2F", "appl_step3_3F", "appl_step3_incl"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
+if args.bin not in ["min", "low", "med", "high"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
+if args.doWhat not in ["plots", "cards"]: raise RuntimeError("Unknown choice for DOWHAT option. Please check help." ) # More options to be added
+if args.signalMasses and args.doWhat != "cards": print "Option SIGNALMASSES to be used only with the 'cards' option. Ignoring it...\n"
+
+lumis = {
+'2016': '35.9', # '33.2' for low MET
+'2017': '41.53', # '36.74' for low MET
+'2018': '59.74',
+}
+LUMI= " -l %s "%(lumis[YEAR])
 
 
-# SYST="susy-sos/syst/susy_sos_dummy.txt" ## change file for systematics here
-SYST="susy-sos/syst/susy_sos_syst_test.txt"
-PLOTandCUTS="susy-sos/mca-2los-test-mc.txt susy-sos/2los_tight.txt" ## check later where is replaced. You need to specify there the mca, since they will not be replaced as for "plots" (due to different input order of combineCards)
+submit = '{command}' 
+#args.doWhat = "dumps" 
+#args.doWhat = "yields" 
+#args.doWhat = "ntuple"
 
+P0="/eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_230819_v5/"
+nCores = 8
+TREESALL = " --Fs {P}/recleaner --FMCs /eos/cms/store/cmst3/user/vtavolar/susySOS/friends_fromv5/%s/bTagWeights/ -P "%(YEAR)+P0+"%s "%(YEAR,)
 
 def base(selection):
+    CORE=TREESALL
+    CORE+=" -f -j %d --split-factor=-1 --year %s --s2v -L susy-sos/functionsSOS.cc -L susy-sos/functionsSF.cc --tree NanoAOD --mcc susy-sos/mcc_sos.txt --mcc susy-sos/mcc_triggerdefs.txt "%(nCores,YEAR) # --neg"
+    if YEAR == "2017": CORE += " --mcc susy-sos/mcc_METFixEE2017.txt "
+    RATIO= " --maxRatioRange 0.0  1.99 --ratioYNDiv 505 "
+    RATIO2=" --showRatio --attachRatioPanel --fixRatioRange "
+    LEGEND=" --legendColumns 2 --legendWidth 0.25 "
+    LEGEND2=" --legendFontSize 0.042 "
+    SPAM=" --noCms --topSpamSize 1.1 --lspam '#scale[1.1]{#bf{CMS}} #scale[0.9]{#it{Preliminary}}' "
+    if args.doWhat == "plots": 
+        CORE+=LUMI+RATIO+RATIO2+LEGEND+LEGEND2+SPAM+" --showMCError "
+        if args.signal: CORE+=" --noStackSig --showIndivSigs "
+        else: CORE+=" --xp signal.* "
 
-
-    #CORE="-P /data1/botta/trees_SOS_80X_130716_Scans/ --mcc susy-sos/mcc-lepWP.txt" # --FMCs {P}/eventBTagWeight"
-    CORE="-P /data/gpetrucc/TREES_80X_SOS_111016_NoIso --Fs {P}/0_both3dCleanLoose_noIso_v2 --mcc susy-sos/lepchoice-recleaner.txt"
-    CORE+=" -f -j 8 -l 36.5 --s2v --tree treeProducerSusyMultilepton --mcc susy-sos/mcc-sf1.txt --neg" #--mcc susy-sos/2los_triggerdefs.txt #12.9 - 36.5 - 18.1
-    if dowhat == "plots": CORE+=" --lspam 'CMS Preliminary' --legendWidth 0.14 --legendFontSize 0.04"
-    GO = ""
+    wBG = " '1.0' "
+    #wFS = " '1.0' "
     if selection=='2los':
-        if (dowhat != "limits") : GO="susy-sos/mca-2los-test-mc.txt susy-sos/2los_tight.txt " #susy-sos/mca-2los-mc.txt
-        GO="%s %s"%(CORE,GO) 
-        #ICHEP
-        #GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'leptonSF_SOS(LepGood1_pdgId,LepGood1_pt,LepGood1_eta,0)*leptonSF_SOS(LepGood2_pdgId,LepGood2_pt,LepGood2_eta,0)*triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_nTrueInt_13fb(nTrueInt)*eventBTagSF'"%GO 
-        #FSR MORIOND17
-        GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_nTrueInt_36fb(nTrueInt)'"%GO #getPUW(nTrueInt)
-        #FSR MORIOND17 - ICHEP DATA
-        #GO="%s -L susy-sos/functionsSOS.cc -L susy-sos/lepton_trigger_SF.cc -W 'triggerSF_SOS(met_pt,metmm_pt(LepGood1_pdgId,LepGood1_pt,LepGood1_phi,LepGood2_pdgId,LepGood2_pt,LepGood2_phi,met_pt,met_phi),0)*puw2016_nTrueInt_13fb(nTrueInt)'"%GO 
-        if dowhat == "plots": GO+=" susy-sos/2los_plots.txt"        
+         GO="%s susy-sos/mca/mca-2los-%s.txt susy-sos/2los_cuts.txt "%(CORE, YEAR)
+         if args.doWhat in ["plots","ntuple"]: GO+=" susy-sos/2los_plots.txt "
+         if args.doWhat in ["cards"]: GO+="  m2l [4,10,20,30,50] "
+         
+
+         if YEAR == "2016":
+             wBG = " 'puWeight*eventBTagSF' " #" 'getLepSF_16(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_16(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*triggerSFfullsim(LepGood1_pt, LepGood1_eta, LepGood2_pt, LepGood2_eta, MET_pt, metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt,LepGood2_phi, MET_pt, MET_phi))' " #bTagWeight
+             #wFS = " 'getLepSFFS(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSFFS(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*ISREwkCor*bTagWeightFS*triggerEff(LepGood1_pt, LepGood1_eta, LepGood2_pt,LepGood2_eta, MET_pt, metmm_pt(LepGood1_pdgId, LepGood1_pt, LepGood1_phi, LepGood2_pdgId, LepGood2_pt, LepGood2_phi, MET_pt, MET_phi))' "
+         elif YEAR == "2017": 
+             wBG = " 'puWeight*eventBTagSF' " #" 'getLepSF_17(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_17(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)' "
+         elif YEAR == "2018":
+             wBG = " 'puWeight*eventBTagSF' "
+         GO="%s -W %s"%(GO,wBG)
+
+         if args.doWhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.52 ")
+         if args.doWhat == "plots": GO=GO.replace(RATIO,  " --maxRatioRange 0.6  1.99 --ratioYNDiv 210 ")
+         if args.doWhat == "cards":         
+             GO += " --binname %s "%args.bin
+         else:
+             GO += " --binname 2los "
+
+ 
+    elif selection=='3l':
+        GO="%s susy-sos/mca/mca-3l-%s.txt susy-sos/3l_cuts.txt "%(CORE,YEAR)
+        if args.doWhat in ["plots","ntuple"]: GO+=" susy-sos/3l_plots.txt "
+        
+        if YEAR == "2016":
+            wBG = " 'puWeight' " #" 'getLepSF_16(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_16(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*getLepSF_16(LepGood3_pt, LepGood3_eta, LepGood3_pdgId)*triggerSFfullsim3L(LepGood1_pt, LepGood1_eta, LepGood2_pt, LepGood2_eta, LepGood3_pt, LepGood3_eta, MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId)), lepton_permut(LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId))' " #bTagWeight
+            #wFS = " 'getLepSFFS(LepGood1_pt, LepGood1_eta, LepGood1_pdgId) * getLepSFFS(LepGood2_pt, LepGood2_eta, LepGood2_pdgId) * getLepSFFS(LepGood3_pt, LepGood3_eta, LepGood3_pdgId)*ISREwkCor*bTagWeightFS * triggerEff3L(LepGood1_pt, LepGood1_eta, LepGood2_pt, LepGood2_eta, LepGood3_pt, LepGood3_eta, MET_pt, metmmm_pt(LepGood1_pt, LepGood1_phi, LepGood2_pt, LepGood2_phi, LepGood3_pt, LepGood3_phi, MET_pt, MET_phi, lepton_Id_selection(LepGood1_pdgId, LepGood2_pdgId, LepGood3_pdgId)), lepton_permut(LepGood3_pdgId, LepGood3_pdgId, LepGood3_pdgId))' "
+        elif YEAR == "2017":
+            wBG = " 'puWeight' " #" 'getLepSF_17(LepGood1_pt, LepGood1_eta, LepGood1_pdgId)*getLepSF_17(LepGood2_pt, LepGood2_eta, LepGood2_pdgId)*getLepSF_17(LepGood3_pt, LepGood3_eta, LepGood3_pdgId)' "
+        elif YEAR == "2018":
+             wBG = " 'puWeight' "
+        GO="%s -W %s"%(GO,wBG)
+
+        if args.doWhat == "plots": GO=GO.replace(LEGEND, " --legendColumns 3 --legendWidth 0.42 ")
+        if args.doWhat == "cards":         
+            GO += " --binname %s "%args.bin
+        else:
+            GO += " --binname 3l "
+
     else:
-        raise RuntimeError, 'Unknown selection'
+        raise RuntimeError('Unknown selection')
 
     return GO
 
+def promptsub(x):
+    procs = [ '' ]
+    if args.doWhat == "cards": procs += ['_FRe_norm_Up','_FRe_norm_Dn','_FRe_pt_Up','_FRe_pt_Dn','_FRe_be_Up','_FRe_be_Dn','_FRm_norm_Up','_FRm_norm_Dn','_FRm_pt_Up','_FRm_pt_Dn','_FRm_be_Up','_FRm_be_Dn']
+    return x + ' '.join(["--plotgroup data_fakes%s+='.*_promptsub%s'"%(x,x) for x in procs])+" --neglist '.*_promptsub.*' "
+
 def procs(GO,mylist):
     return GO+' '+" ".join([ '-p %s'%l for l in mylist ])
+
 def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
-def runIt(GO,name,plots=[],noplots=[]):
-    if '_74vs76' in name: GO = prep74vs76(GO)
-    if   dowhat == "plots":  print 'python mcPlots.py',"--pdir %s/%s"%(ODIR,name),GO,' '.join(['--sP %s'%p for p in plots]),' '.join(['--xP %s'%p for p in noplots]),' '.join(sys.argv[3:])
-    elif dowhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[3:])
-    elif dowhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[3:])
-    elif (dowhat == "limits" and ('_unblind' in name)): 
-        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])
-    elif (dowhat == "limits" and ('_unblind' in name)==0 and (('met300' in name)==0 or ('ewk' in name)==0) and ('CR'in name)==0 ):
-        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov ',' '.join(sys.argv[3:]) 
-    elif (dowhat == "limits" and ('_unblind' in name)==0 and ('met300' in name) and ('ewk' in name) and ('CR'in name)==0):
-        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' --asimov --hardZero',' '.join(sys.argv[3:]) 
-    elif (dowhat == "limits" and 'CR'in name):
-        # comment: for the moment recycling plots and noplots as a container for histo name and binning when running in 'limits' mode (to be improved) 
-        print 'echo %s; python makeShapeCardsSusy.py'%name,PLOTandCUTS,' '.join(['%s'%p for p in plots]),' '.join(['%s'%p for p in noplots]),SYST,' -o %s'%name,' ',GO," --od %s"%(ODIR),' '.join(sys.argv[3:])     
-    else:
-        raise RuntimeError, 'Unknown selection'
+
+def runIt(GO,name):
+    if args.data: name=name+"_data"
+    if args.norm: name=name+"_norm"
+    if args.unc: name=name+"_unc"
+    print name+"\n"
+    if args.doWhat == "plots":  print submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ])]))
+
+    if args.doWhat == "cards":  print submit.format(command=' '.join(['python makeShapeCardsNew.py --savefile',"--outdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ]), "--xp='signal(?!.*%s).*'"%args.signalMasses.strip('signal') if args.signalMasses is not None else ''   ]))
+
+
+    # What is supposed to be included in sys.argv[4] and after?
+    #elif args.doWhat == "yields": print 'echo %s; python mcAnalysis.py'%name,GO,' '.join(sys.argv[4:])
+    #elif args.doWhat == "dumps":  print 'echo %s; python mcDump.py'%name,GO,' '.join(sys.argv[4:])
+    #elif args.doWhat == "ntuple": print 'echo %s; python mcNtuple.py'%name,GO,' '.join(sys.argv[4:])
+
 def add(GO,opt):
     return '%s %s'%(GO,opt)
+
 def setwide(x):
     x2 = add(x,'--wide')
     x2 = x2.replace('--legendWidth 0.35','--legendWidth 0.20')
     return x2
-def fulltrees(x):
-    return x.replace('TREES_76X_200216_jecV1M2_skimOnlyMC_reclv8','TREES_76X_200216_jecV1M2')
+
+def binYearChoice(x,torun,YEAR):
+    metBin = ''
+    x2 = add(x,'-E ^eventFilters_'+YEAR[-2:]+'$ ')
+    if '_min' in torun:
+        metBin = 'met75'
+    elif '_low' in torun:
+        metBin = 'met125'
+    elif '_med' in torun:
+        metBin = 'met200'
+        x2 = add(x2,'-X ^mm$ ')
+    elif '_high' in torun:
+        metBin = 'met250'
+        x2 = add(x2,'-X ^mm$ ')
+    if metBin != '': x2 = add(x2,'-E ^'+metBin+'$ -E ^'+metBin+'_trig_'+YEAR[-2:]+'$ ')
+    else: print "\n--- NO TRIGGER APPLIED! ---\n"
+    return x2
+
+allow_unblinding = False
+
 
 if __name__ == '__main__':
 
-    torun = sys.argv[2]
+    torun = conf
+
+    if (not args.doWhat=="cards" ) and ((not allow_unblinding) and args.data and (not any([re.match(x.strip()+'$',torun) for x in ['.*appl.*','.*cr.*','3l.*_Zpeak.*']]))): raise RuntimeError, 'You are trying to unblind!'
 
 
-
-    ### SR plots: Pure MC Sig+Bkg, Data-Driven Bkgs, Variations for TT and DY syst, Application region Bins, DATA! --- Also for limits computations
-
-    if '2los_SR_' in torun:
+    if '2los_' in torun:
         x = base('2los')
-        if(dowhat != "limits"): x = add(x,"--perBin")   
-        if '_mc' in torun: 
-            if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs ") 
-        if '_ddbkg' in torun: 
-            if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showMCError") 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mc-frdata.txt') #ICHEP trees
-            x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mc-frdata.txt') #Moriond trees
-            #PLOTandCUTS="susy-sos/mca-2los-mc-frdata.txt susy-sos/2los_tight.txt" #ICHEP trees
-            PLOTandCUTS="susy-sos/mca-2los-test-mc-frdata.txt susy-sos/2los_tight.txt" #Moriond trees                
-        if '_appl' in torun:
-            if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs") 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') #ICHEP trees
-            x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata.txt') #Moriond trees
-            x = add(x,"-I ^TT ")  
-        if '_unblind' in torun:
-            if(dowhat != "limits"):x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #ICHEP trees
-            x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata-frdata.txt') #Moriond trees
-            #PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt" #ICHEP trees
-            PLOTandCUTS="susy-sos/mca-2los-test-mcdata-frdata.txt susy-sos/2los_tight.txt" #Moriond trees               
-        if '_met125_mm' in torun: 
-            x = add(x,"-E ^pt5sublep -E ^mm -E ^upperMediumMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET ")
-            x = x.replace('-l 12.9','-l 10.1') 
-            x = x.replace('-l 36.5','-l 33.7') 
-            x = x.replace('-l 18.1','-l 15.3') 
-            if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt') 
-        if '_met200' in torun: 
-            x = add(x," -E ^mediumMET -E ^upperHighMET -X ^triggerAll -E ^triggerMET ") 
-            if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
-        if '_met300' in torun: 
-            x = add(x," -E ^highMET -X ^triggerAll -E ^triggerMET ")
-            if(dowhat != "limits"):x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
-        if ('_ewk20' in torun) or ('_ewk7' in torun) or ('_ewkHig' in torun):
-            x = add(x,"--xp T2tt_350_dM20 -E ^MT -E ^SF -E ^pt5sublep") ### change ptSublep here to test 3.5 
-            if dowhat == "limits":
-                runIt(x,torun,["m2l"],["'[4,10,20,30,50]'"])
-            else: 
-                if'_bins' in torun: 
-                    runIt(x,'%s/all'%torun,['SR_bins_EWKino'])
-                if'_Vars' in torun: 
-                    runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-        if '_stop20' in torun:
-            x = add(x,"--xp TChiWZ_150_dM20,TChiWZ_150_dM7 ") 
-            if dowhat == "limits":
-                runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
-            else:
-                if '_bins' in torun: 
-                    runIt(x,'%s/all'%torun,['SR_bins_stop']) 
-                if '_Vars' in torun: 
-                    runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])    
-                
+        x = binYearChoice(x,torun,YEAR)
+    
+        if 'sr' in torun:
+            if '_ddbkg' in torun:
+                x = x.replace("susy-sos/mca/%s/mca-2los-%s.txt", "susy-sos/mca/%s/mca-2los-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))
+            if '_col' in torun:
+                x = add(x,"-X ^mT$ -X ^SF$ ")
+                if '_med' in torun: 
+                     x = add(x,"-X ^pt5sublep$ ")
+                     x = x.replace('-E ^met200$','-E ^met200_col$')
+                if '_high' in torun: 
+                     x = add(x,"-X ^pt5sublep$ ")
+                     x = x.replace('-E ^met250$','-E ^met300_col$')
+
+        if 'appl' in torun:
+            if '_step1' in torun:
+                x = x.replace("susy-sos/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos/mca/%s/mca-2los-%s-semidd-step1.txt"%(YEAR, YEAR))
+                if '_1F' in torun:
+                    x=add(x, "--xp fakes_matched2fake_.* --xp fakes_matched_.*")
+                if '_2F' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.* --xp fakes_matched_.*")
+                if '_incl' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.*")
+            if '_step2' in torun:
+                x = x.replace("susy-sos/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos/mca/%s/mca-2los-%s-semidd-step2.txt"%(YEAR, YEAR))
+                x=add(x, "--mcc ScaleFactors/SemiDD_ScaleFactors_%s.txt"%(YEAR))
+                if '_1F' in torun:
+                    x=add(x, "--xp fakes_matched2fake_.*")
+                if '_2F' in torun:
+                    x=add(x, "--xp fakes_matched1fake_.*")
+            if '_col' in torun:
+                x = add(x,"-X ^mT$ -X ^SF$ ")
+                if '_med' in torun: 
+                    x = add(x,"-X ^pt5sublep$ ")
+                    x = x.replace('-E ^met200$','-E ^met200_col$')
+                if '_high' in torun: 
+                    x = add(x,"-X ^pt5sublep$ ")
+                    x = x.replace('-E ^met250$','-E ^met300_col$')
+            x = add(x,"-X ^twoTight$ ")
+            x = add(x,"-E ^oneNotTight$ ")
+
+        if 'cr' in torun:
+            x = add(x, "-X ^SF$ ")
+
+        if 'cr_dy' in torun:
+            if '_med' in torun: x = x.replace('-E ^met200$','-E ^met200_CR$')
+            x = add(x,"-X ^ledlepPt$ -X ^twoTight$ ")
+            x = add(x,"-I ^mtautau$ ")
+            x = add(x,"-E ^CRDYlepId$ -E ^CRDYledlepPt$ ")
+
+        if 'cr_tt' in torun:
+            if '_med' in torun:
+                x = x.replace('-E ^met200$','-E ^met200_CR$')
+                x = add(x,'-X ^pt5sublep$ ')
+            x = add(x,"-X ^ledlepPt$ -X ^twoTight$ -X ^bveto$ -X ^mT$ ")
+            x = add(x,"-E ^CRTTlepId$ -E ^CRTTledlepPt$ -E ^btag$ ")
+
+        if 'cr_vv' in torun:
+            if '_med' in torun:
+                x = x.replace('-E ^met200$','-E ^met200_CR$')
+                x = add(x,'-X ^pt5sublep$ ')
+            x = add(x,"-X ^ledlepPt$ -X ^twoTight$ -X ^mT$ ")
+            x = add(x,"-E ^CRVVlepId$ -E ^CRVVleplepPt$ -E ^CRVVmT$ ")
+
+        if 'cr_ss' in torun:
+            if '_step3' in torun:
+                 x = x.replace("susy-sos/mca/%s/mca-2los-%s.txt"%(YEAR, YEAR), "susy-sos/mca/%s/mca-2los-%s-semidd-step3.txt"%(YEAR, YEAR))
+                 x=add(x, "--mcc ScaleFactors/SemiDD_ScaleFactors_%s.txt"%(YEAR))
+                 #if '_1F' in torun:
+                 #    x=add(x, "--xp fakes_matched2fake_.*")
+                 #if '_2F' in torun:
+                 #    x=add(x, "--xp fakes_matched1fake_.*")
+            if '_med' in torun:
+                x = x.replace('-E ^met200$','-E ^met200_CR$')
+                x = add(x,'-X ^pt5sublep$ ')
+            x = add(x,"-X ^mT$ ")
+            x = add(x,"-I ^OS$ ")
+
+    elif '3l_' in torun:
+        x = base('3l')
+        x = binYearChoice(x,torun,YEAR)
+        if 'sr_ddbkg' in torun:
+            x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-dd.txt"%(YEAR, YEAR, YEAR, YEAR))    
+        if 'appl' in torun:
+            if '_step1' in torun:
+                x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-semidd-step1.txt"%(YEAR, YEAR, YEAR, YEAR))
+                if '_1F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_2F' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_3F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.* --sP fakes_matchedAL1LNTfake_.*")
+                if '_incl' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched2fake_.* --sP fakes_matched3fake_.*")
+            if '_step2' in torun:
+                x = x.replace("susy-sos/mca/%s/mca-3l-%s.txt", "susy-sos/mca/%s/susy-sos/mca/mca-3l-%s-semidd-step2.txt"%(YEAR, YEAR, YEAR, YEAR))
+                if '_1F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
+                if '_2F' in torun:
+                    x = add(x, "--xp fakes_matched1fake_.* --xp fakes_matched3fake_.*")
+                if '_3F' in torun:
+                    x = add(x, "--xp fakes_matched2fake_.* --xp fakes_matched3fake_.*")
+            x = add(x,"-X ^threeTight$ ")
+            x = add(x,"-E ^oneNotTight$ ")
+
+        if 'cr_wz' in torun:
+            x = add(x,"-X ^minMll$ -X ^ZvetoTrigger$ -X ^ledlepPt$ -X ^threeTight$ -X ^pt5sublep$ ")
+            x = add(x,"-E ^CRWZlepId$ -E ^CRWZmll$ ")
+            x = x.replace('-E ^met200$','-E ^met200_CR$')
+            if '_min' in torun: 
+                x = add(x,"-E ^CRWZPtLep_MuMu$ ")
+                x = x.replace('-E ^met75_trig','-E ^met75_trig_CR')
+            if '_low' in torun: 
+                x = add(x,"-E ^CRWZPtLep_MuMu$ ")
+                x = x.replace('-E ^met125_trig','-E ^met125_trig_CR')
+            if '_med' in torun: x = add(x,"-E ^CRWZPtLep_HighMET$ ")
 
 
-    ### DY Control Region Data-MC, LowMET and HighMET              
-    if '2los_CR_DY_vars' in torun:
-        x = base('2los')
-        if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs")
-        if '_data' in torun: 
-            if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') #ICHEP trees
-            if(dowhat != "limits"):x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata.txt') #Moriond trees
-            #PLOTandCUTS="susy-sos/mca-2los-mcdata.txt susy-sos/2los_tight.txt" #ICHEP trees
-            PLOTandCUTS="susy-sos/mca-2los-test-mcdata.txt susy-sos/2los_tight.txt" #Moriond trees
-            if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
-            if(dowhat == "limits" and ('_stop20' in torun)):x = add(x,"--xp TChiWZ_150_dM20")
-            if(dowhat == "limits" and (('_ewk20' in torun) or ('_ewk7' in torun) or ('_ewkHig' in torun))):x = add(x,"--xp T2tt_350_dM20")
-        if '_met200' in torun:
-            x = add(x,"-E ^mediumMET -E ^MT -X ^TT -E ^CRDYTT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_ip3d)>0.01 || fabs(LepGood1_sip3d)>2 || fabs(LepGood2_ip3d)>0.01 || fabs(LepGood2_sip3d)>2' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -X ^triggerAll -E ^triggerMET")
-        if '_met125' in torun:
-            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMediumMET -E ^MT -X ^TT -E ^CRDYTT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt || fabs(LepGood1_ip3d)>0.01 || fabs(LepGood1_sip3d)>2 || fabs(LepGood2_ip3d)>0.01 || fabs(LepGood2_sip3d)>2' -R mtautau Invmtautau '0.<mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)&&mass_tautau(met_pt,met_phi,LepGood1_pt,LepGood1_eta,LepGood1_phi,LepGood2_pt,LepGood2_eta,LepGood2_phi)<160.' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep")
-            x = x.replace('-l 12.9','-l 10.1') 
-            x = x.replace('-l 36.5','-l 33.7')
-            x = x.replace('-l 18.1','-l 15.3') 
-        if dowhat == "limits":
-            runIt(x,torun,["nLepGood"],["1,-0.5,0.5"])
-        else:
-            runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
+    if not args.data: x = add(x,'--xp data ')
+    if args.unc: x = add(x,"--unc susy-sos/systsUnc.txt")
+    if args.norm: x = add(x,"--sp '.*' --scaleSigToData ")
 
+    if '_low' in torun :
+        if YEAR=="2016": x = x.replace(LUMI," -l 33.2 ")
+        if YEAR=="2017": x = x.replace(LUMI," -l 36.74 ")
 
+    if args.doWhat == "cards" and args.signalMasses:
+        masses=args.signalMasses.rstrip('+').split('_')
+        masses='_'.join(masses[-2:])
+        torun=torun+'_'+masses
+    runIt(x,'%s'%torun)
 
-
-    ### TT Control Region Data-MC, LowMET and HighMET         
-    if '2los_CR_TT_vars' in torun:
-        x = base('2los')
-        if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs")
-        if '_data' in torun:
-            if(dowhat != "limits"):x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') #ICHEP trees
-            if(dowhat != "limits"):x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata.txt') #Moriond trees
-            #PLOTandCUTS="susy-sos/mca-2los-mcdata.txt susy-sos/2los_tight.txt" #ICHEP trees
-            PLOTandCUTS="susy-sos/mca-2los-test-mcdata.txt susy-sos/2los_tight.txt" #Moriond trees
-            if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
-            if(dowhat == "limits" and ('_stop20' in torun)):x = add(x,"--xp TChiWZ_150_dM20")
-            if(dowhat == "limits" and (('_ewk20' in torun) or ('_ewk7' in torun) or ('_ewkHig' in torun))):x = add(x,"--xp T2tt_350_dM20")            
-        if '_met200' in torun:             
-            x = add(x,"-E ^mediumMET -X ^TT -E ^CRttTT -X ^bveto -E ^btag -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -X ^triggerAll -E ^triggerMET")  
-        if '_met125' in torun:             
-            x = add(x,"-E ^mm -E ^upperMediumMET -X ^TT -E ^CRttTT -X ^bveto -E ^btag -E ^pt5sublep -R ^ledlepPt NoUpledlepPt '5 < LepGood1_pt' -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET")
-            x = x.replace('-l 12.9','-l 10.1')  
-            x = x.replace('-l 36.5','-l 33.7')
-            x = x.replace('-l 18.1','-l 15.3') 
-        if dowhat == "limits":
-            runIt(x,torun,["nLepGood"],["1,-0.5,0.5"])
-        else:
-            runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-
-                
-
-
-    ### SS Stop-like Control Region (high MET)
-    if '2los_CR_SS' in torun: 
-        x = base('2los')
-        x = add(x,"-E ^mediumMET -X ^triggerAll -E ^triggerMET -X ^opposite-sign -E ^same-sign")
-        if(dowhat != "limits"): x = add(x,"--noStackSig --showIndivSigs --showMCError")
-        if(dowhat != "limits"):x = add(x,"--showRatio --maxRatioRange -2 5") 
-        x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #ICHEP trees
-        x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata-frdata.txt') #Moriond trees
-        #PLOTandCUTS="susy-sos/mca-2los-mcdata-frdata.txt susy-sos/2los_tight.txt" #ICHEP trees
-        PLOTandCUTS="susy-sos/mca-2los-test-mcdata-frdata.txt susy-sos/2los_tight.txt" #Moriond trees        
-        if dowhat == "limits":
-            runIt(x,torun,["LepGood1_pt"],["'[5,12,20,30]'"])
-        else:
-            #runIt(x,'%s/all'%torun,['SR_bins_stop'])    
-            if '_bins' in torun: 
-                runIt(x,'%s/all'%torun,['SR_bins_stop']) 
-            if '_Vars' in torun: 
-                runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop']) 
- 
-
-
-    ### WW Control Region, Data-MC, HighMET             
-    if '2los_CR_WW_vars' in torun:
-        x = base('2los')
-        x = add(x,"--noStackSig --showIndivSigs")
-        if '_data' in torun: 
-            x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt') #ICHEP trees
-            x = x.replace('mca-2los-test-mc.txt','mca-2los-test-mcdata.txt') #Moriond trees
-            x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
-        if '_met200' in torun:             
-            x = add(x,"-E ^highMET -X ^TT -E ^CRttTT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -X ^triggerAll -E ^triggerMET")
-        if '_met125' in torun:    
-            x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-            x = add(x,"-E ^mm -E ^upperMET -X ^TT -E ^CRttTT -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -E ^ZVeto -X ^MT -E ^InvMT -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep")
-            x = x.replace('-l 12.9','-l 10.1') 
-            x = x.replace('-l 36.5','-l 33.7')
-            x = x.replace('-l 18.1','-l 15.3') 
-        runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])            
-
-
-
-
-    ### FR WJets closure
-    if '2los_FR_Closure_vars' in torun:
-        x = base('2los')
-        x = add(x,"--plotmode nostack")
-        x = x.replace('mca-2los-test-mc.txt','mca-2los-mc-closuretest.txt')       
-        x = add(x," --showRatio --maxRatioRange 0 4 --ratioDen QCDFR_WJets --ratioNums WJets") #-X lowMET -X HT -X METovHT
-        runIt(x,'%s/all'%torun)
-
-
-
-
-
-
-
-     ##################################
-     ##################################
-     ##################################
-
-
-
-
-
-#     ### MC Distributions with Signal shapes normalized to Bkg, n-minus1 option
-#     if '2los_SR_vars' in torun:
-#         x = base('2los')
-#         if 'ewk_met200' in torun: 
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^SF -E ^pt5sublep -E ^MT") 
-#             if '_unblind' in torun:
-#                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-#                 #x = add(x,"--plotmode norm")
-#                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-#                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt') 
-#         if 'ewk_met125' in torun: 
-#             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT")
-#             if '_unblind' in torun:
-#                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-#                 #x = add(x,"--plotmode norm")
-#                 x = x.replace('-l 12.9','-l 10.1')
-#                 x = x.replace('-l 36.5','-l 33.7')
-#                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-#                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-#         if 'stop_met200' in torun: 
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET ") 
-#             if '_unblind' in torun:
-#                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-#                 #x = add(x,"--plotmode norm")
-#                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-#                 x = x.replace('mcc-sf1.txt','mcc-sf-highmet.txt')
-#         if 'stop_met125' in torun: 
-#             x = add(x,"-E ^upperMET -E ^mm -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep ")
-#             if '_unblind' in torun:
-#                 x = add(x,"--noStackSig --showIndivSigs --showRatio --maxRatioRange -2 5 --showMCError") 
-#                 #x = add(x,"--plotmode norm")
-#                 x = x.replace('-l 12.9','-l 10.1')
-#                 x = x.replace('-l 36.5','-l 33.7')
-#                 x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#                 x = x.replace('mca-2los-mc.txt','mca-2los-mcdata-frdata.txt') #remove signal
-#                 x = x.replace('mcc-sf1.txt','mcc-sf-lowmet.txt')
-#         if '_nminus1' in torun: 
-#             x = add(x,"--n-minus-one")
-#             x = x.replace('-f','')
-#             x = add(x,"--noStackSig --showIndivSigShapes --xp TChiNeuWZ_95,T2ttDeg_300,T2ttDeg_315")
-#             #x = add(x,"--plotmode norm")
-#         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-
-            
-
-
-#     ### FR Application region, Data-MC, LowMET and HighMET 
-#     if '2los_CR_FF_vars' in torun:
-#         x = base('2los')
-#         x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-#         if '_data' in torun: 
-#             x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-#             x = add(x,"--showRatio --maxRatioRange -2 5 ") #--showMCError 
-#         if '_met200_ewk_all' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT -E ^pt5sublep -E ^SF -E ^MT") 
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_ewk_all' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT -E ^pt5sublep -E ^MT") 
-#             x = x.replace('-l 12.9','-l 10.1')  
-#         if '_met200_stop_all' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -I ^TT") 
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_stop_all' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -I ^TT -E ^pt5sublep") 
-#             x = x.replace('-l 12.9','-l 10.1')  
-#         if '_met200_ewk_1T1F' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^pt5sublep -E ^SF -E ^MT -X ^TT -E ^TnotT") 
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_ewk_1T1F' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT -X ^TT -E ^TnotT") 
-#             x = x.replace('-l 12.9','-l 10.1')  
-#         if '_met200_stop_1T1F' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^TT -E ^TnotT")  
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_stop_1T1F' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -X ^TT -E ^TnotT") 
-#             x = x.replace('-l 12.9','-l 10.1')
-#         if '_met200_ewk_1F1F' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -E ^pt5sublep -E ^SF -E ^MT -X ^TT -E ^notTnotT") 
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_ewk_1F1F' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -E ^MT -X ^TT -E ^notTnotT") 
-#             x = x.replace('-l 12.9','-l 10.1')  
-#         if '_met200_stop_1F1F' in torun:             
-#             x = add(x,"-E ^highMET -X ^triggerAll -E ^triggerMET -X ^TT -E ^notTnotT")  
-#             x = x.replace('-l 12.9','-l 12.9')
-#         if '_met125_stop_1F1F' in torun: 
-#             x = x.replace('puw2016_vtx_4fb(nVert)', 'puw2016_vtx_postTS_1p4fb(nVert)' )
-#             x = add(x,"-E ^mm -E ^upperMET -E ^runRange -X ^triggerAll -E ^triggerDoubleMuMET -E ^pt5sublep -X ^TT -E ^notTnotT") 
-#             x = x.replace('-l 12.9','-l 10.1')         
-#         runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-
-
- 
-
-
-
-
-# # to be added if we want to relax these cuts in CR with MET>200
-# #-X ^HT -X ^Upsilon_veto -R ^ISRjet noIDISRjet 'Jet1_pt > 25 && fabs(Jet1_eta)<2.4' -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)'
-
-
-#     # ### WZ Control Region, Data-MC, HighMET         
-#     # if '2los_CR_WZ_vars' in torun:
-#     #     x = base('2los')
-#     #     x = add(x,"--noStackSig --showIndivSigs --xp TChiNeuWZ_95")
-#     #     if '_data' in torun: 
-#     #         x = x.replace('mca-2los-mc.txt','mca-2los-mcdata.txt')
-#     #         x = add(x,"--showRatio --maxRatioRange -2 5") #--showMCError
-#     #     if '_met200' in torun:             
-#     #         x = add(x,"-E ^highMET -E ^MT -R ^TT CRTTTT 'LepGood1_isTightCRTT && LepGood2_isTightCRTT' -R ^ledlepPt NoUpledlepPt '20 < LepGood1_pt' -X ^dilep -X ^opposite-sign -X ^Mll -E ^minMll -E ^triLep -E ^Zpeak -X ^triggerAll -E ^triggerMET -X ^HT -X ^Upsilon_veto -R METovHT relaxMETovHT '(met_pt/(htJet25-LepGood1_pt-LepGood2_pt))>(2/3)' ")
-#     #         x = x.replace('-l 12.9','-l 12.9')
-#     #     runIt(x,'%s/all'%torun,[],['SR_bins_EWKino','SR_bins_stop'])
-
-
+######################################################################################
+# Useful options for plotting, to be used when needed
+#
+#        if '_appl' in torun: x = add(x,'-I ^TT ')
+#        if '_1fo' in torun:
+#            x = add(x,"-A alwaystrue 1FO 'LepGood1_isLepTight+LepGood2_isLepTight==1'")
+#        if '_2fo' in torun: x = add(x,"-A alwaystrue 2FO 'LepGood1_isLepTight+LepGood2_isLepTight==0'")
+#        if '_relax' in torun: x = add(x,'-X ^TT ')
+#        if '_extr' in torun:
+#            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-sigextr.txt').replace('--showRatio --maxRatioRange 0 2','--showRatio --maxRatioRange 0 1 --ratioYLabel "S/B"')
+#        if '_data' not in torun: x = add(x,'--xp data ')
+#        if '_table' in torun:
+#            x = x.replace('mca-2lss-mc.txt','mca-2lss-mc-table.txt')
+#        if '_frdata' in torun: # Why?
+#            x = promptsub(x)
+#            if '_blinddata' in torun:
+#                x = x.replace('mca-2lss-mc.txt','mca-2lss-mcdata.txt')
+#                x = add(x,'--xp data ')
+#            elif not '_data' in torun: raise RuntimeError
+#            x = x.replace('mca-2lss-mcdata.txt','mca-2lss-mcdata-frdata.txt')
+#            if '_table' in torun:
+#                x = x.replace('mca-2lss-mcdata-frdata.txt','mca-2lss-mcdata-frdata-table.txt')
+###
+#            if '_leadmupt25' in torun: x = add(x,"-A 'entry point' leadmupt25 'abs(LepGood1_pdgId)==13 && LepGood1_pt>25' ")
+#            if '_highMetNoBCut' in torun: x = add(x,"-A 'entry point' highMET 'met_pt>60'")
+#            else: x = add(x,"-E ^1B ")
