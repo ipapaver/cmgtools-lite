@@ -20,8 +20,8 @@ parser.add_argument("--norm", action="store_true", default=False, help="Normaliz
 parser.add_argument("--unc", action="store_true", default=False, help="Include uncertainties")
 parser.add_argument("--inPlots", default=None, help="Select plots, separated by commas, no spaces")
 parser.add_argument("--exPlots", default=None, help="Exclude plots, separated by commas, no spaces")
-parser.add_argument("--signalMasses", default=None, help="Select only these signal samples, comma separated")
-parser.add_argument("--doWhat", default="plots", help="Do plots ot cards")
+parser.add_argument("--signalMasses", default=None, help="Select only these signal samples (e.g 'signal_TChiWZ_100_70+'), comma separated. Use only when doing 'cards'")
+parser.add_argument("--doWhat", default="plots", help="Do 'plots' or 'cards'. Default = '%(default)s'")
 args = parser.parse_args()
 
 ODIR=args.outDir
@@ -32,6 +32,8 @@ if YEAR not in ("2016","2017","2018"): raise RuntimeError("Unknown year: Please 
 if args.lep not in ["2los","3l"]: raise RuntimeError("Unknown choice for LEP option. Please check help" )
 if args.reg not in ["sr", "sr_col", "cr_dy", "cr_tt", "cr_vv", "cr_ss", "cr_wz", "appl", "appl_col","appl_step1_1F", "appl_step1_2F", "appl_step1_3F", "appl_step1_incl", "appl_step2_1F", "appl_step2_2F", "appl_step2_3F", "appl_step2_incl", "appl_step3_1F", "appl_step3_2F", "appl_step3_3F", "appl_step3_incl"]: raise RuntimeError("Unknown choice for REG option. Please check help." )
 if args.bin not in ["min", "low", "med", "high"]: raise RuntimeError("Unknown choice for BIN option. Please check help." )
+if args.doWhat not in ["plots", "cards"]: raise RuntimeError("Unknown choice for DOWHAT option. Please check help." ) # More options to be added
+if args.signalMasses and args.doWhat != "cards": print "Option SIGNALMASSES to be used only with the 'cards' option. Ignoring it...\n"
 
 lumis = {
 '2016': '35.9', # '33.2' for low MET
@@ -125,18 +127,13 @@ def sigprocs(GO,mylist):
     return procs(GO,mylist)+' --showIndivSigs --noStackSig'
 
 def runIt(GO,name):
-    print name
     if args.data: name=name+"_data"
     if args.norm: name=name+"_norm"
     if args.unc: name=name+"_unc"
-#    if args.signalMasses: name=name+"_unc"
-    print name
-    print GO
+    print name+"\n"
     if args.doWhat == "plots":  print submit.format(command=' '.join(['python mcPlots.py',"--pdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ])]))
 
-    if args.doWhat == "cards":  
-#        print submit.format(command=' '.join(['python makeShapeCardsNew.py --savefile',"--outdir %s/%s/%s_bkg"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ]), "--xp='^(?!.*signal).*'"   ]))
-        print submit.format(command=' '.join(['python makeShapeCardsNew.py --savefile',"--outdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ]), "--xp='signal(?!.*%s).*'"%args.signalMasses.strip('signal') if args.signalMasses is not None else ''   ]))
+    if args.doWhat == "cards":  print submit.format(command=' '.join(['python makeShapeCardsNew.py --savefile',"--outdir %s/%s/%s"%(ODIR,YEAR,name),GO,' '.join(['--sP %s'%p for p in (args.inPlots.split(",") if args.inPlots is not None else []) ]),' '.join(['--xP %s'%p for p in (args.exPlots.split(",") if args.exPlots is not None else []) ]), "--xp='signal(?!.*%s).*'"%args.signalMasses.strip('signal') if args.signalMasses is not None else ''   ]))
 
 
     # What is supposed to be included in sys.argv[4] and after?
@@ -307,7 +304,7 @@ if __name__ == '__main__':
         if YEAR=="2016": x = x.replace(LUMI," -l 33.2 ")
         if YEAR=="2017": x = x.replace(LUMI," -l 36.74 ")
 
-    if args.signalMasses:
+    if args.doWhat == "cards" and args.signalMasses:
         masses=args.signalMasses.rstrip('+').split('_')
         masses='_'.join(masses[-2:])
         torun=torun+'_'+masses
