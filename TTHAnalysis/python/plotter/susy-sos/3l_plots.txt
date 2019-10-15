@@ -1,7 +1,7 @@
 yields : 1 : 1,-0.5,0.5; XTitle="Total Event Yields"
 
-SR_3l     : minMllSFOS : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', LegendCutoff=0, MoreY=2
-SR_3l_fine : minMllSFOS : 12, 0, 120 ; XTitle="M(ll) [GeV]", IncludeOverflows=True, MoreY=2
+SR_3l     : minMllSFOS : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', LegendCutoff=1e-3, YMin=0.0, YMax=5.5
+SR_3l_fine : minMllSFOS : 12, 0, 120 ; XTitle="M(ll) [GeV]", IncludeOverflows=True, YMin=0.0, YMax=22
 ## Lepton variables
 
 #lep1pt    : LepGood1_pt                                           : 20,0,40  ; XTitle="Leading lepton p_{T} [GeV]"     , Legend='TR', IncludeOverflows=False, LegendCutoff=1e-10

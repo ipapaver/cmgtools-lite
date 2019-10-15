@@ -131,11 +131,37 @@ if year == 2018:
 
     elif analysis == "frqcd":
         mcSamples = byCompName(mcSamples_, [
-            "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170|300)to.*_Mu5"
-            "QCD_HT(100|200|300|500)",
-            "QCD_Pt(15|20|30|50|80|120|170)to.*_EMs.*",  
-            "QCD_Pt(20|30|50|80|120|170|250)to.*_bcToE.*",        
-            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+            #"QCD_Mu15", 
+            "QCD_Pt15to20_Mu5",
+            "QCD_Pt20to30_Mu5",
+            "QCD_Pt30to50_Mu5",
+            "QCD_Pt50to80_Mu5",
+            "QCD_Pt80to120_Mu5",
+            "QCD_Pt80to120_Mu5_ext1",
+            "QCD_Pt120to170_Mu5",
+            "QCD_Pt120to170_Mu5_ext1",
+            "QCD_Pt170to300_Mu5",
+            "QCD_Pt300to470_Mu5",
+            "QCD_Pt300to470_Mu5_ext3",
+            "QCD_HT100to200",
+            "QCD_HT200to300",
+            "QCD_HT300to500",
+            "QCD_HT500to700",
+            "QCD_Pt15to20_EMEnriched",
+            "QCD_Pt20to30_EMEnriched",
+            "QCD_Pt30to50_EMEnriched",
+            "QCD_Pt50to80_EMEnriched",
+            "QCD_Pt80to120_EMEnriched",
+            "QCD_Pt120to170_EMEnriched",
+            "QCD_Pt170to300_EMEnriched",
+            "QCD_Pt300toInf_EMEnriched",
+            "QCD_Pt15to20_bcToE",
+            "QCD_Pt20to30_bcToE",
+            "QCD_Pt30to80_bcToE",
+            "QCD_Pt80to170_bcToE",
+            "QCD_Pt170to250_bcToE",
+            "QCD_Pt250toInf_bcToE",
+            #"WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
         ])
         DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
         DatasetsAndTriggers.append( ("EGamma",       triggers["FR_1e_noiso"] + triggers["FR_1e_iso"]) )
@@ -229,7 +255,7 @@ elif year == 2017:
          "QCD_Mu15", "QCD_Pt(20|30|50|80|120|170)to.*_Mu5", 
          "QCD_Pt(20||30|50|80|120|170)to.*_Mu5",
          "QCD_HT(100|200|300|500)",
-         Missing Pt170to300 EMEnriched
+         #Missing Pt170to300 EMEnriched
          "QCD_Pt(20|30|50|80|120|300)to.*_EMEnriched.*", 
          "QCD_Pt(20|30|50|80|120|170)to.*_bcToE.*"        
          "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"

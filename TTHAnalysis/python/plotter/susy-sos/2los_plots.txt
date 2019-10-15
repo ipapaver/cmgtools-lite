@@ -1,10 +1,10 @@
 yields         : 1 : 1,-0.5,0.5; XTitle="Total Event Yields"
 #nVert: nVert  : 40,-0.5,41.5; XTitle="N_{vtx}"
 
-SR_2l_ewk      : m2l         : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', IncludeOverflows=True, LegendCutoff=1e-3, YMore=2.2
+SR_2l_ewk      : m2l         : [4,10,20,30,50] ; XTitle="M(ll) [GeV]", Legend='TR', IncludeOverflows=True, LegendCutoff=1e-3, YMin=0.0, YMax=15
 SR_2l_col     : LepGood1_pt : [5,12,20,30]    ; XTitle="Leading lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-3, MoreY=2.8
 
-SR_2l_ewk_fine : m2l         : 10,0,50         ; XTitle="M(ll) [GeV]", Legend='TR', IncludeOverflows=True, LegendCutoff=0, MoreY=2, LegendCutoff=1e-3
+SR_2l_ewk_fine : m2l         : 10,0,50         ; XTitle="M(ll) [GeV]", Legend='TL', IncludeOverflows=True, LegendCutoff=0, MoreY=2, LegendCutoff=1e-3
 SR_2l_col_fine: LepGood1_pt : 20,0,40         ; XTitle="Leading lepton p_{T} [GeV]", Legend='TR', LegendCutoff=1e-2
 
 ## Lepton variables
