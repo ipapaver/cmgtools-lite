@@ -1,0 +1,35 @@
+## TChiWZ Signal Points
+#---------------------------------------
+incl_signal	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-signal.txt"
+
+## Prompt tt bkg
+#---------------------------------------
+incl_prompt_tt	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-prompt-tt.txt"
+
+## Prompt dy bkg
+#---------------------------------------
+incl_prompt_dy	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-prompt-dy.txt"
+
+## Prompt vv bkg
+#---------------------------------------
+incl_prompt_vv	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-prompt-vv.txt"
+
+## Non prompt Bkg
+#---------------------------------------
+## Semi dd bkg -- step 3: matching in sidebands, add sidebanc SF and FRweight
+## Third case : include both sidebands with SF and FR
+##
+incl_fakes_matched1fake : + ; IncludeMca="susy-sos/mca-includes/2017/2los_semiddbkg/mca-2los-fakes-matchedAL1LNT_applmc.txt, AddWeight="ScaleFactor1F", FakeRate="susy-sos/fakerate/2017/2los/fakerate_applmc1.txt"
+incl_fakes_matched2fake : + ; IncludeMca="susy-sos/mca-includes/2017/2los_semiddbkg/mca-2los-fakes-matchedAL1LNT_applmc.txt, AddWeight="ScaleFactor2F", FakeRate="susy-sos/fakerate/2017/2los/fakerate_applmc2.txt"
+
+## Rare bkg
+#---------------------------------------
+incl_rares	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-rares.txt"
+
+## Conversions bkg
+#---------------------------------------
+incl_convs	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-2los-convs.txt"
+
+## Data
+#---------------------------------------
+incl_data	: + ; IncludeMca="susy-sos/mca-includes/2017/mca-data.txt"

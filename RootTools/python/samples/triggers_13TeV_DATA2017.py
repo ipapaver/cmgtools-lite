@@ -53,7 +53,7 @@ triggers_FR_1mu_noiso_smpd = [ "HLT_Mu%d_v*" % pt for pt in (20,27) ] + ["HLT_Mu
 triggers_FR_1mu_noiso_highpt = [ "HLT_Mu%d_v*" % pt for pt in (50,) ] # SingleMu PD
 triggers_FR_1e_noiso = [ "HLT_Ele%d_CaloIdM_TrackIdM_PFJet30_v*" % pt for pt in (8,17,23) ] # SingleElectron
 triggers_FR_1e_iso   = [ "HLT_Ele%d_CaloIdL_TrackIdL_IsoVL_PFJet30_v*" % pt for pt in (8,12,23) ] # SingleElectron
-
+triggers_FR_1mu_iso = ["HLT_Mu%d_TrkIsoVVL_v*" % pt for pt in (8,17,19) ] # DoubleMu AD
 
 # HT:
 triggers_pfht1050 = ['HLT_PFHT1050_v*']

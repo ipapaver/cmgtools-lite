@@ -15,8 +15,8 @@ conf = dict(
 #    muonId = "softMvaId" ###looseId
 )
 susySOS_skim_cut =  ("nMuon + nElectron >= 2 &&" + ##if heppy option fast
-###        "MET_pt > {minMet}  &&"+
-       "Sum$(Muon_pt > {muPt}) +"
+       "MET_pt > {minMet}  &&"+
+       "Sum$(Muon_pt > {muPt})" +
        "Sum$(Electron_pt > {elePt}) >= 2").format(**conf) ## && Muon_miniPFRelIso_all < {miniRelIso} && Electron_miniPFRelIso_all < {miniRelIso}  #mettere qui MET_pt>50 #cp dal cfg la selezione
 #cut  = ttH_skim_cut
 muonSelection     = lambda l : abs(l.eta) < 2.4 and l.pt > conf["muPt"]  and l.sip3d < conf["sip3d"] and abs(l.dxy) < conf["dxy"] and abs(l.dz) < conf["dz"]  and l.pfRelIso03_all*l.pt < ( conf["iperbolic_iso_0"]+conf["iperbolic_iso_1"]/l.pt) and abs(l.ip3d) < conf["ip3d"] ##is it relIso03?  ##and l.miniPFRelIso_all < conf["miniRelIso"]##l.relIso03*l.pt
@@ -53,15 +53,23 @@ susySOS_sequence_step1 = [lepSkim, lepMerge, autoPuWeight, yearTag, xsecTag, lep
 #==== 
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
 from CMGTools.TTHAnalysis.tools.nanoAOD.ttHLepQCDFakeRateAnalyzer import ttHLepQCDFakeRateAnalyzer
-lepFR = ttHLepQCDFakeRateAnalyzer(jetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4,
+centralJetSel = lambda j : j.pt > 25 and abs(j.eta) < 2.4 and j.jetId > 0
+lepFR = ttHLepQCDFakeRateAnalyzer(jetSel = centralJetSel,
                                   pairSel = lambda pair : deltaR(pair[0].eta, pair[0].phi, pair[1].eta, pair[1].phi) > 0.7,
                                   maxLeptons = 1, requirePair = True)
 
-#susySOS_sequence_step1_FR = [m for m in susySOS_sequence_step1 if m != lepSkim] + [ lepFR ]
-#ttH_skim_cut_FR = ("nMuon + nElectron >= 1 && nJet >= 1 && Sum$(Jet_pt > 25 && abs(Jet_eta)<2.4) >= 1 &&" + 
-#       "Sum$(Muon_pt > {muPt} && Muon_miniPFRelIso_all < {miniRelIso} && Muon_sip3d < {sip3d}) +"
-#       "Sum$(Electron_pt > {muPt} && Electron_miniPFRelIso_all < {miniRelIso} && Electron_sip3d < {sip3d} && Electron_{eleId}) >= 1").format(**conf)
 
+from CMGTools.TTHAnalysis.tools.nanoAOD.nBJetCounter import nBJetCounter
+nBJetDeepCSV25NoRecl = lambda : nBJetCounter("DeepCSV25", "btagDeepB", centralJetSel)
+nBJetDeepFlav25NoRecl = lambda : nBJetCounter("DeepFlav25", "btagDeepFlavB", centralJetSel)
+
+susySOS_sequence_step1_FR = [m for m in susySOS_sequence_step1 if m != lepSkim] + [ lepFR ,nBJetDeepCSV25NoRecl, nBJetDeepFlav25NoRecl ]
+susySOS_skim_cut_FR = ("nMuon + nElectron >= 1 && nJet >= 1 && Sum$(Jet_pt > 25 && abs(Jet_eta)<2.4) >= 1 &&" +
+       "Sum$(Muon_pt > {muPt} && Muon_sip3d < {sip3d}) +"
+       "Sum$(Electron_pt > {elePt} && Electron_sip3d < {sip3d}) >= 1").format(**conf)
+
+#&& Muon_miniPFRelIso_all < {miniRelIso}
+#&& Electron_miniPFRelIso_all < {miniRelIso}
 
 #==== items below are normally run as friends ====
 
@@ -325,7 +333,7 @@ isTightSOSMu = lambda : ObjTagger('isTightSOSMu', "Muon", [ lambda lep,year: ful
 
 isTightSOSLepGood = lambda : ObjTagger('isTightSOSLepGood', "LepGood", [ fullTightLeptonSel ])
 
-
+isFOSOSLepGood = lambda : ObjTagger("isFOSOSLepGood", "LepGood", [fullCleaningLeptonSel])
 
 
 isTightLepDY = lambda : ObjTagger('isTightLepDY', "LepGood", [   lambda lep,year : clean_and_FO_selection_SOS(lep,year) and 

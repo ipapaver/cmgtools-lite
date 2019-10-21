@@ -1,0 +1,53 @@
+# vim: syntax=sh
+#WJets_light+: WJetsToLNu_HT70to100    : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT100to200   : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT200to400   : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT400to600   : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT600to800   : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT800to1200  : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT1200to2500 : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+WJets_light+: WJetsToLNu_HT2500toInf  : xsec : LepGood_genPartFlav == 3 ; FillColor=ROOT.kGray+1, Label="WJets(LF)"
+
+
+#WJets_HF+: WJetsToLNu_HT70to100    : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT100to200   : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT200to400   : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT400to600   : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT600to800   : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT800to1200  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT1200to2500 : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+WJets_HF+: WJetsToLNu_HT2500toInf  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGray+3, Label="WJets(HF)"
+
+
+#DY_jets_light+ : DYJetsToLL_M50_HT70to100      : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT100to200     : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT200to400     : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT400to600     : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT600to800     : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT800to1200    : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT1200to2500   : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M50_HT2500toInf    : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M4to50_HT100to200  : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M4to50_HT200to400  : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M4to50_HT400to600  : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+DY_jets_light+ : DYJetsToLL_M4to50_HT600toInf  : xsec : LepGood_genPartFlav == 3; FillColor=ROOT.kCyan-4, Label="DYJets(LF)"
+
+
+#DY_jets_HF+ : DYJetsToLL_M50_HT70to100   : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"
+DY_jets_HF+ : DYJetsToLL_M50_HT100to200  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"
+DY_jets_HF+ : DYJetsToLL_M50_HT200to400  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M50_HT400to600  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M50_HT600to800  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M50_HT800to1200 : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M50_HT1200to2500: xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M50_HT2500toInf : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kCyan+2, Label="DYJets(HF)"  
+DY_jets_HF+ : DYJetsToLL_M4to50_HT100to200  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ;  FillColor=ROOT.kCyan+2, Label="DYJets(HF)" 
+DY_jets_HF+ : DYJetsToLL_M4to50_HT200to400  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ;  FillColor=ROOT.kCyan+2, Label="DYJets(HF)" 
+DY_jets_HF+ : DYJetsToLL_M4to50_HT400to600  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ;  FillColor=ROOT.kCyan+2, Label="DYJets(HF)" 
+DY_jets_HF+ : DYJetsToLL_M4to50_HT600toInf  : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ;  FillColor=ROOT.kCyan+2, Label="DYJets(HF)" 
+
+TT_jets_light+ : TTJets_SingleLeptonFromT    : xsec : LepGood_genPartFlav == 3  ; FillColor=ROOT.kGreen-4, Label="TTJets(LF)"
+TT_jets_light+ : TTJets_SingleLeptonFromTbar : xsec : LepGood_genPartFlav == 3  ; FillColor=ROOT.kGreen-4, Label="TTJets(LF)"
+
+TT_jets_HF+: TTJets_SingleLeptonFromT    : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGreen+2, Label="TTJets(HF)"
+TT_jets_HF+: TTJets_SingleLeptonFromTbar : xsec : (LepGood_genPartFlav == 5 || LepGood_genPartFlav == 4) ; FillColor=ROOT.kGreen+2, Label="TTJets(HF)"
