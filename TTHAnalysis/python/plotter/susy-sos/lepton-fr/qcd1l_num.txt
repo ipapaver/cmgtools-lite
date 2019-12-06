@@ -1,0 +1,10 @@
+muon_tight     :  LepGood_isLepTight && abs(LepGood_pdgId) == 13 && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0   : 2, -0.5, 1.5; Title='Muons tight inclusive', MarkerColor=4, MarkerStyle=21, MarkerSize=1.3
+ele_tight     :  LepGood_isLepTight && abs(LepGood_pdgId) == 11  && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0 : 2, -0.5, 1.5; Title='Electorns tight inclusive', MarkerColor=5, MarkerStyle=21, MarkerSize=1.3
+
+#muon_tight_Barrel    : LepGood_isLepTight && abs(LepGood_pdgId) == 13 && abs(LepGood_eta)< 0.83  && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0 && abs(LepGood_awayJet_eta) < 0.83 : 2, -0.5, 1.5; Title='Muons tight Barrel', MarkerColor=4, MarkerStyle=21, MarkerSize=1.3
+#ele_tight_Barrel    : LepGood_isLepTight && abs(LepGood_pdgId) == 11 && abs(LepGood_eta)< 0.83  && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0 && abs(LepGood_awayJet_eta) < 0.83: 2, -0.5, 1.5; Title='Electrons tight Barrel', MarkerColor=5, MarkerStyle=21, MarkerSize=1.3
+
+#muon_tight_End    : LepGood_isLepTight && abs(LepGood_pdgId) == 13 &&  abs(LepGood_eta)< 2.4 && abs(LepGood_eta)> 0.83  && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0 && abs(LepGood_awayJet_eta) > 0.83 && abs(LepGood_awayJet_eta) > 2.4 : 2, -0.5, 1.5; Title='Muons tight Endcap', MarkerColor=4, MarkerStyle=21, MarkerSize=1.3
+#ele_tight_End    : LepGood_isLepTight && abs(LepGood_pdgId) == 11 && abs(LepGood_eta)< 2.4 && abs(LepGood_eta)> 0.83 && LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0 && abs(LepGood_awayJet_eta) > 0.83 && abs(LepGood_awayJet_eta) > 2.4 : 2, -0.5, 1.5; Title='Electrons tight Endcap', MarkerColor=5, MarkerStyle=21, MarkerSize=1.3
+
+

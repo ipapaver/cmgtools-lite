@@ -144,13 +144,13 @@ if year == 2018:
             "QCD_Pt300to470_Mu5_ext3",
             "QCD_Pt470to600_Mu5",
             "QCD_Pt470to600_Mu5_ext1",
-            "QCD_HT100to200",
-            "QCD_HT200to300",
-            "QCD_HT300to500",
-            "QCD_HT500to700",
-            "QCD_HT700to1000",
-            "QCD_HT1000to1500",
-            "QCD_HT1500to2000",
+           # "QCD_HT100to200",
+           # "QCD_HT200to300",
+           # "QCD_HT300to500",
+           # "QCD_HT500to700",
+           # "QCD_HT700to1000",
+           # "QCD_HT1000to1500",
+           # "QCD_HT1500to2000",
             "QCD_Pt15to20_EMEnriched",
             "QCD_Pt20to30_EMEnriched",
             "QCD_Pt30to50_EMEnriched",
@@ -158,13 +158,16 @@ if year == 2018:
             "QCD_Pt80to120_EMEnriched",
             "QCD_Pt120to170_EMEnriched",
             "QCD_Pt170to300_EMEnriched",
-            "QCD_Pt15to20_bcToE",
+           "QCD_Pt15to20_bcToE",
             "QCD_Pt20to30_bcToE",
             "QCD_Pt30to80_bcToE",
             "QCD_Pt80to170_bcToE",
             "QCD_Pt170to250_bcToE",
-            "QCD_Pt250toInf_bcToE",
-
+            #"QCD_Pt250toInf_bcToE",
+            "T_tWch_noFullyHad",
+            "TBar_tWch_noFullyHad",
+            "T_tch$",
+            "TBar_tch$"
             "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
         ])
         DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
@@ -257,39 +260,43 @@ elif year == 2017:
     elif analysis == "frqcd":
      mcSamples = byCompName(mcSamples_, [
             #"QCD_Mu15",
-            "QCD_Pt20to30_Mu5",
-            "QCD_Pt30to50_Mu5",
+            #"QCD_Pt20to30_Mu5",
+            #"QCD_Pt30to50_Mu5",
             "QCD_Pt50to80_Mu5",
             "QCD_Pt80to120_Mu5",
             "QCD_Pt120to170_Mu5",
-            "QCD_Pt170to300_Mu5",
-            "QCD_Pt300to470_Mu5",
-            "QCD_Pt470to600_Mu5",
-            "QCD_HT100to200",
-            "QCD_HT200to300",
-            "QCD_HT300to500",
-            "QCD_HT500to700",
-            "QCD_HT700to1000",
-            "QCD_HT1000to1500",
-            "QCD_HT1500to2000",
-            "QCD_Pt15to20_EMEnriched",
-            "QCD_Pt20to30_EMEnriched",
-            "QCD_Pt30to50_EMEnriched",
-            "QCD_Pt50to80_EMEnriched",
-            "QCD_Pt80to120_EMEnriched",
-            "QCD_Pt120to170_EMEnriched",
-            #"QCD_Pt170to300_EMEnriched",
-            #"QCD_Pt15to20_bcToE",
-            "QCD_Pt20to30_bcToE",
-            "QCD_Pt30to80_bcToE",
-            "QCD_Pt80to170_bcToE",
-            "QCD_Pt170to250_bcToE",
-            "QCD_Pt250toInf_bcToE",
-         "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
-     ])
-     DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
-     DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1mu_noiso"] + triggers["FR_1e_iso"]) )
-     DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
+            #"QCD_Pt170to300_Mu5",
+            #"QCD_Pt300to470_Mu5",
+            #"QCD_Pt470to600_Mu5",
+            #"QCD_HT100to200",
+            #"QCD_HT200to300",
+            #"QCD_HT300to500",
+            #"QCD_HT500to700",
+            #"QCD_HT700to1000",
+            #"QCD_HT1000to1500",
+            #"QCD_HT1500to2000",
+            #"QCD_Pt15to20_EMEnriched",
+            #"QCD_Pt20to30_EMEnriched",
+            #"QCD_Pt30to50_EMEnriched",
+            #"QCD_Pt50to80_EMEnriched",
+            #"QCD_Pt80to120_EMEnriched",
+            #"QCD_Pt120to170_EMEnriched",
+            ##"QCD_Pt170to300_EMEnriched",
+            ##"QCD_Pt15to20_bcToE",
+            #"QCD_Pt20to30_bcToE",
+            #"QCD_Pt30to80_bcToE",
+            #"QCD_Pt80to170_bcToE",
+            #"QCD_Pt170to250_bcToE",
+            #"QCD_Pt250toInf_bcToE",
+            #"T_tWch_noFullyHad",
+            #"TBar_tWch_noFullyHad",
+            #"T_tch$",
+            #"TBar_tch$",
+            "WJetsToLNu_LO", "DYJetsToLL_M50_LO", "DYJetsToLL_M10to50_LO", "TT(Lep|Semi)_pow"
+      ])
+     #DatasetsAndTriggers.append( ("DoubleMuon", triggers["FR_1mu_noiso"] + triggers["FR_1mu_iso"]) )
+     #DatasetsAndTriggers.append( ("SingleElectron",       triggers["FR_1mu_noiso"] + triggers["FR_1e_iso"]) )
+     #DatasetsAndTriggers.append( ("SingleMuon", triggers["FR_1mu_noiso_smpd"]) )
 
 elif year == 2016:
     if analysis == 'main':
@@ -424,13 +431,13 @@ elif year == 2016:
            "QCD_Pt170to300_Mu5",
            "QCD_Pt300to470_Mu5",
            "QCD_Pt470to600_Mu5",
-           "QCD_HT100to200",
-           "QCD_HT200to300",
-           "QCD_HT300to500",
-           "QCD_HT500to700",
-           "QCD_HT700to1000",
-           "QCD_HT1000to1500",
-           "QCD_HT1500to2000",
+           ##"QCD_HT100to200",
+           ##"QCD_HT200to300",
+           ##"QCD_HT300to500",
+           ##"QCD_HT500to700",
+           ##"QCD_HT700to1000",
+           ##"QCD_HT1000to1500",
+           ##"QCD_HT1500to2000",
            #"QCD_Pt15to20_EMEnriched",
            "QCD_Pt20to30_EMEnriched",
            #"QCD_Pt30to50_EMEnriched",
@@ -479,7 +486,7 @@ if getHeppyOption("nanoPreProcessor"):
     preproc_cfg = {2016: ("mc94X2016","data94X2016"),
                    2017: ("mc94Xv2","data94Xv2"),
                    2018: ("mc102X","data102X_ABC","data102X_D")}
-    preproc_cmsswArea = "/afs/cern.ch/work/i/ipapaver/susySOS_nanoAOD_friendProduction/NewFramework_v2_FRntuples/CMSSW_10_2_15" #MODIFY ACCORDINGLY
+    preproc_cmsswArea = "/afs/cern.ch/work/i/ipapaver/susySOS_nanoAOD_friendProduction/NewFrameworkVit_v2_FRntuples/" #MODIFY ACCORDINGLY
     preproc_mc = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][0]),cmsswArea=preproc_cmsswArea,keepOutput=True)
     if year==2018:
         preproc_data_ABC = nanoAODPreprocessor(cfg='%s/src/PhysicsTools/NanoAOD/test/%s_NANO.py'%(preproc_cmsswArea,preproc_cfg[year][1]),cmsswArea=preproc_cmsswArea,keepOutput=True, injectTriggerFilter=True, injectJSON=True)

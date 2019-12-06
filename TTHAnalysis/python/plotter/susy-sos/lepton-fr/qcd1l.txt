@@ -1,0 +1,20 @@
+# vim: syntax=sh
+
+minimal: LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0
+mu : abs(LepGood_pdgId)==13 ; Disable=True
+el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 ; Disable=True
+mu_den      : LepGood_isFOSOSLepGood ; Disable=True
+el_den      : LepGood_isFOSOSLepGood ; Disable=True
+
+triggObj_match : Sum$(TrigObj_pt>9 && deltaR(LepGood_eta[0],LepGood_phi[0],TrigObj_eta,TrigObj_phi)<0.1 && abs(TrigObj_id)==13)>=1; Disable=True
+triggObj_matchJet : Sum$(TrigObj_pt>40 && deltaR(LepGood_awayJet_eta[0], LepGood_awayJet_phi[0], TrigObj_eta,TrigObj_phi)<0.5 && abs(TrigObj_id)==1)>=1 ; Disable=True
+
+#JetBTagCSV_Denom : (LepGood_isTightSOSLepGood || (!LepGood_isTightSOSLepGood && LepGood_jetBTagDeepCSV<0.124)) ; Disable=True
+JetBTagCSV_Denom :  LepGood_jetBTagDeepCSV<0.08 ; Disable=True
+
+num_muon     :  LepGood_isTightSOSLepGood ; Disable=True
+num_ele      :  LepGood_isTightSOSLepGood  ; Disable=True
+
+
+
+
