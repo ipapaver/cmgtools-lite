@@ -178,17 +178,14 @@ if __name__ == "__main__":
     ROOT.gStyle.SetOptStat(0)
         
 
-    ptbins_el = [ 5,10,15,20,30 ]
-    ptbins_mu = [ 3.5,5,10,15,20,30]
+    ptbins_el = [ 5,10,15,25,35,45,65,100 ]
+    ptbins_mu = [ 3,5,10,15,20,30]
     etabins_el = [0, 1.479, 2.5]
     etabins_mu = [0, 1.2,   2.4]
     etaslices_el = [ (0.4,"00_15"), (1.8,"15_25") ]
     etaslices_mu = [ (0.4,"00_12"), (1.8,"12_24") ]
     XsQ    = [ "QCD", "data_comb" ]
-    XsEWK_ele  = [ "ele_tight_pt_fineEff_background"]
-    XsEWK_muon  = [ "muon_tight_pt_fineEff_background"]
     Xnices = [ "MC QCD", "Data, comb." ]
-    
 
     mva_el = "080"
     mva_mu = "085"
@@ -197,26 +194,22 @@ if __name__ == "__main__":
         outname = PlotOut + "/fr_%s.root" % year
         outfile = ROOT.TFile.Open(outname,"RECREATE")
 
-        h2d_el = [ make2D(outfile,"FR_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
-        h2d_el_PR = [make2D(outfile,"PR_el_"+X, ptbins_el, etabins_el)for X in XsEWK_ele]
+        #h2d_el = [ make2D(outfile,"FR_"+mva_el+"_el_"+X, ptbins_el, etabins_el) for X in XsQ ]
         h2d_mu = [ make2D(outfile,"FR_mu_"+X, ptbins_mu, etabins_mu) for X in XsQ ]
-        h2d_mu_PR = [make2D(outfile,"PR_mu_"+X, ptbins_mu, etabins_mu)for X in XsEWK_muon]
+        #h2d_el_tt = [ make2D(outfile,"FR_mva"+mva_el+"_el_TT", ptbins_el, etabins_el) ]
+        #h2d_mu_tt = [ make2D(outfile,"FR_mva"+mva_mu+"_mu_TT", ptbins_mu, etabins_mu) ]
+        #h2d_el_tt_norm = [ make2D(outfile,"norm_el_TT", ptbins_el, etabins_el) ]
+        #h2d_mu_tt_norm = [ make2D(outfile,"norm_mu_TT", ptbins_mu, etabins_mu) ]
 
         Plots = "/afs/cern.ch/user/i/ipapaver/www/FRMaps_FullStatusReport/%s/qcd1l/" % ( options.years)
-        Plots_PR = "/afs/cern.ch/user/i/ipapaver/www/Efficiencies_FullStatusReport_%s/fr-mc"%(options.years)
-
-
-        readMany2D(XsQ, h2d_el, "/".join([Plots, "el", "HLT_PFJet/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_el, (5,30) )
-        readMany2D(XsEWK_ele, h2d_el_PR, "/".join([Plots_PR, "el", "NewFriendTrees/pr_sub_eta_%s.root"]), "%s", etaslices_el, (5,30) )
         readMany2D(XsQ, h2d_mu, "/".join([Plots, "mu",  "HLT_Mu8/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (10,30) )
-        readMany2D(XsQ, h2d_mu, "/".join([Plots, "mu",  "HLT_Mu3_PFJet40/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (3.5,10) )
-        readMany2D(XsEWK_muon, h2d_mu_PR, "/".join([Plots_PR, "mu",  "NewFriendTrees/pr_sub_eta_%s.root"]), "%s", etaslices_mu, (3.5,30) )
-
+        readMany2D(XsQ, h2d_mu, "/".join([Plots, "mu",  "HLT_Mu3_PFJet40/fakerates-mtW1R/fr_sub_eta_%s_comp.root"]), "%s", etaslices_mu, (3,10) )
+        print(h2d_mu)
+        #readMany2D(XsQ, h2d_el, "/".join([Plots, "el", "HLT_EleX_OR/fakerates-mtW1R/fr_sub_eta_%s_compG.root"]), "%s", etaslices_el, (15,999) )
 
         if options.fixLastBin:
             fixLastBin(-1, h2d_el[1], h2d_el[0])
             fixLastBin(-1, h2d_mu[1], h2d_mu[0])
-
 
         #### TT MC-truth
         MCPlots = "%s/%s/fr-mc/%s" % ( options.outdir, options.mvaVersionMC, year)
@@ -246,27 +239,24 @@ if __name__ == "__main__":
 
         # Serialize
         for h in h2d_mu:    outfile.WriteTObject(h)
-        for h in h2d_el:    outfile.WriteTObject(h)
-        for h in h2d_mu_PR:    outfile.WriteTObject(h)
-        for h in h2d_el_PR:    outfile.WriteTObject(h)
         #for h in h2d_el_tt + h2d_mu_tt: outfile.WriteTObject(h)
         #for h in h2d_el_tt_norm + h2d_mu_tt_norm: outfile.WriteTObject(h)
 
         # Plot
 
-       # lep = "mu"
-       # h2d = h2d_mu
-       # xcuts = [10]
-       # for lep,h2d,xcuts in (("mu",h2d_mu,[10]),("el", h2d_el,[]),("mu",h2d_mu_PR,[]),("el", h2d_el_PR,[])):
-       #     for ieta,eta in enumerate(["barrel","endcap"]):
-       #           #effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(["MC ttbar"],h2dtt) ]
-       #           #print(xnices, h
-       #           effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
-       #           styles(effs)
-       #           options.xlines = xcuts
-       #           savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
-       #           stackEffs(PlotOut+"/fr_%s_%s_%s.root"%(lep,eta,year), None,effs,options, legHeader = "%s %s, %s" % (lep,eta,year))
-       #           ROOT.gErrorIgnoreLevel = savErrorLevel;
+        lep = "mu"
+        h2d = h2d_mu
+        xcuts = [10]
+        #for lep,h2d,xcuts in (("mu",h2d_mu,[0,30])):
+        for ieta,eta in enumerate(["barrel","endcap"]):
+              #effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(["MC ttbar"],h2dtt) ]
+              #print(xnices, h
+              effs = [ (n,graphFromXSlice(h,ieta+1)) for (n,h) in zip(Xnices,h2d) ]
+              styles(effs)
+              options.xlines = xcuts
+              savErrorLevel = ROOT.gErrorIgnoreLevel; ROOT.gErrorIgnoreLevel = ROOT.kWarning;
+              stackEffs(PlotOut+"/fr_%s_%s_%s.root"%(lep,eta,year), None,effs,options, legHeader = "%s %s, %s" % (lep,eta,year))
+              ROOT.gErrorIgnoreLevel = savErrorLevel;
            #variants = makeVariants(h2d[-1],norm=(h2tt_norm[0] if options.norm else None))
            #for v in variants: outfile.WriteTObject(v, v.GetName())
            #for ieta,eta in enumerate(["barrel","endcap"]):

@@ -1,0 +1,68 @@
+# vim: syntax=sh
+minimal: LepGood_awayJet_pt > 30 && LepGood_awayJet_jetId > 0; Disable=True
+sip3d  : LepGood_sip3d<2.5 ; Disable=True
+mu : abs(LepGood_pdgId)==13 ; Disable=True
+el : abs(LepGood_pdgId)==11 && LepGood_convVeto && LepGood_lostHits == 0 ; Disable=True
+mu_den_noBTag      : (LepGood_isTightSOSLepGood || LepGood_isFOSOSLepGood_NoBTag); Disable=True
+el_den_noBTag      : (LepGood_isTightSOSLepGood || LepGood_isFOSOSLepGood_NoBTag) ; Disable=True
+
+mu_den             : LepGood_isFOSOSLepGood ; Disable=True
+el_den             : LepGood_isFOSOSLepGood ; Disable=True
+
+ElectronEff_Den :  (Electron_genPartFlav==1 || Electron_genPartFlav==15) && Electron_pt > 5.0 ; Disable=True
+ElectronEff_Barrel : fabs(Electron_eta) < 1.47            ; Disable=True 
+ElectronEff_Endcap : fabs(Electron_eta) < 2.5 && fabs(Electron_eta) >1.47    ; Disable=True
+MuonEff_Den : (Muon_genPartFlav==1 || Muon_genPartFlav==15) && Muon_looseId==1 && Muon_pt > 3.5; Disable=True
+MuonEff_Barrel : fabs(Muon_eta) < 1.2 ; Disable=True
+MuonEff_Endcap : fabs(Muon_eta) < 2.4 && fabs(Muon_eta) >1.2 ; Disable=True
+
+mu_aj50            : LepGood_awayJet_pt>50 ; Disable=True
+el_aj30            : LepGood_awayJet_pt>30 ; Disable=True
+el_aj40            : LepGood_awayJet_pt>40 ; Disable=True
+
+n_mu               : nMuon<=1 ; Disable=True
+n_el               : nElectron<=1 ; Disable=True
+
+mu3_pf40           : HLT_Mu3_PFJet40   ; Disable=True
+mu3_pf40_LepPt     : LepGood_pt > 3    ; Disable=True
+mu8                : HLT_Mu8           ; Disable=True
+mu8_LepPt          : LepGood_pt > 8    ; Disable=True
+
+trig_el2018             : HLT_PFJet25||HLT_PFJet40||HLT_PFJet60||HLT_PFJet80||HLT_PFJet140||HLT_PFJet200||HLT_PFJet260 ; Disable=True
+trig_el2016_2017        : HLT_PFJet40||HLT_PFJet60||HLT_PFJet80||HLT_PFJet140||HLT_PFJet200||HLT_PFJet260 ; Disable=True
+
+triggObj_match : Sum$(TrigObj_pt>9 && deltaR(LepGood_eta[0],LepGood_phi[0],TrigObj_eta,TrigObj_phi)<0.1 && abs(TrigObj_id)==13)>=1; Disable=True
+triggObj_matchJet : Sum$(TrigObj_pt>40 && deltaR(LepGood_awayJet_eta[0], LepGood_awayJet_phi[0], TrigObj_eta,TrigObj_phi)<0.5 && abs(TrigObj_id)==1)>=1 ; Disable=True
+
+#Tunning for flavour dependancy
+JetBTagCSV_Denom : (LepGood_isTightSOSLepGood_NoBTag ||  LepGood_jetBTagDeepCSV<0.124) ; Disable=True
+
+matchJet              : LepGood_jetIdx > -1; Disable=True
+unmatchJet            : LepGood_jetIdx == -1; Disable=True
+extendSideBand        : (LepGood_isTightSOSLepGood || (LepGood_pfRelIso03_all*LepGood_pt < 40-((LepGood_pt-5)/3))) ; Disable=True
+hyperabsIso           :(LepGood_isTightSOSLepGood || (LepGood_pfRelIso03_all*LepGood_pt <(20+(300/LepGood_pt)))); Disable=True
+
+relIso    : (LepGood_isTightSOSLepGood || LepGood_pfRelIso03_all<1); Disable=True
+assocJetPt   :  LepGood_pt*(1+LepGood_jetRelIso) > 0; Disable=True 
+sip3d     : LepGood_sip3d<2 ; Disable=True
+ip3d      : LepGood_ip3d<0.01; Disable=True
+num_mu:  LepGood_isTightSOSLepGood ; Disable=True
+num_el:  LepGood_isTightSOSLepGood  ; Disable=True
+
+eleMVA2016_barrel : (LepGood_isTightSOSLepGood || ((LepGood_pt<=10  && LepGood_mvaFall17V2noIso>0.97) || (LepGood_pt<=20 && LepGood_pt>10  && LepGood_mvaFall17V2noIso>0.97)||(LepGood_pt>20 && LepGood_mvaFall17V2noIso>0.85))); Disable=True
+eleMVA2016_endcap : (LepGood_isTightSOSLepGood || ((LepGood_pt<=10  && LepGood_mvaFall17V2noIso>0.98) || (LepGood_pt<=20 && LepGood_pt>10  && LepGood_mvaFall17V2noIso>0.8)||(LepGood_pt>20 && LepGood_mvaFall17V2noIso>0.2))); Disable=True
+
+eleMVA2017_barrel: (LepGood_isTightSOSLepGood || ((LepGood_pt<=10 && LepGood_mvaFall17V1noIso>0.8) || (LepGood_pt>10 && LepGood_pt<20 && LepGood_mvaFall17V1noIso>-0.2) || (LepGood_pt>=20  && LepGood_mvaFall17V1noIso>-0.4))) ; Disable=True
+eleMVA2017_endcap: (LepGood_isTightSOSLepGood || ((LepGood_pt<=10 && LepGood_mvaFall17V1noIso>0.75) || (LepGood_pt>10 && LepGood_pt<20 && LepGood_mvaFall17V1noIso>-0.2) || (LepGood_pt>=20  && LepGood_mvaFall17V1noIso>-0.4))) ; Disable=True
+
+eleMVA2018_barrel : (LepGood_isTightSOSLepGood || ((LepGood_pt<=10  && LepGood_mvaFall17V2noIso>0.98) || (LepGood_pt<=20 && LepGood_pt>10  && LepGood_mvaFall17V2noIso>0.98)||(LepGood_pt>20 && LepGood_mvaFall17V2noIso>0.8))); Disable=True
+eleMVA2018_endcap : (LepGood_isTightSOSLepGood || ((LepGood_pt<=10  && LepGood_mvaFall17V2noIso>0.98) || (LepGood_pt<=20 && LepGood_pt>10  && LepGood_mvaFall17V2noIso>0.9)||(LepGood_pt>20 && LepGood_mvaFall17V2noIso>0))); Disable=True
+
+
+FOeff_mu          : abs(LepGood_pdgId)==13 &&  LepGood_looseId && LepGood_pt>3.5 && LepGood_pt<30 ; Disable=True
+FOeff_mu_notLoose : abs(LepGood_pdgId)==13 &&  LepGood_pt>3.5  ; Disable=True
+FOeff_el          : abs(LepGood_pdgId)==11 &&  LepGood_pt>5 && LepGood_pt<30 ; Disable=True
+barrel_el         : abs(LepGood_eta)<1.47 ; Disable=True
+endcap_el         : abs(LepGood_eta)<2.5 && abs(LepGood_eta)>1.47 ; Disable=True
+barrel_mu         : abs(LepGood_eta)<1.2 ; Disable=True
+endcap_mu         : abs(LepGood_eta)<2.4 && abs(LepGood_eta)>1.2 ; Disable=True
