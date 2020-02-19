@@ -1,6 +1,6 @@
 ##### RARES
-#Rares           : T_tWch_noFullyHad             : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
-#Rares           : TBar_tWch_noFullyHad          : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares           : T_tWch_noFullyHad             : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
+Rares           : TBar_tWch_noFullyHad          : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
 Rares           : TTWToLNu_fxfx                 : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
 Rares           : TTZToLLNuNu_amc               : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
 Rares           : TTZToLLNuNu_m1to10            : xsec  : LepGood1_mcMatchId!=0 && LepGood2_mcMatchId!=0        ; FillColor=ROOT.kMagenta+2, Label="Rares"
