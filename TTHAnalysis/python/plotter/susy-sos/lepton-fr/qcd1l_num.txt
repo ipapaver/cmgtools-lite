@@ -1,0 +1,3 @@
+muon_tight     :  LepGood_isTightSOSLepGood : 2, -0.5, 1.5; Title='Muons tight inclusive', MarkerColor=4, MarkerStyle=21, MarkerSize=1.3
+ele_tight      :  LepGood_isTightSOSLepGood : 2, -0.5, 1.5; Title='Electorns tight inclusive', MarkerColor=5, MarkerStyle=21, MarkerSize=1.3
+

@@ -2,18 +2,15 @@
 #  use mcEfficiencies.py to make plots of the fake rate
 ################################
 
+#usage: ./susy-sos/make_fake_rate_MC.sh sos YEAR LEPTON TRIGGER
+# will print commands per lepton and trigger for Barrel and Endcap 
+
 ANALYSIS=$1; if [[ "$1" == "" ]]; then exit 1; fi; shift;
 case $ANALYSIS in
 sos) 
     YEAR=$1; shift; 
     case $YEAR in 2016) L=35.9;; 2017) L=41.5;; 2018) L=59.7;; esac
-    T=/eos/cms/store/cmst3/group/tthlep/peruzzi/NanoTrees_SOS_230819_v5/$YEAR
-    #T2=/eos/cms/store/cmst3/user/vtavolar/susySOS/friends_fromv5/$YEAR/recleaner_mc_new/
-    #test -d /tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/tmp/$USER/TREES_ttH_FR_nano_v5/$YEAR -P $T"
-    #test -d /data/$USER/TREES_ttH_FR_nano_v5/$YEAR && T="/data/$USER/TREES_ttH_FR_nano_v5/$YEAR -P $T"
-    #hostname | grep -q cmsco01 && T=/data1/gpetrucc/TREES_94X_FR_240518
-    #hostname | grep -q cmsphys10 && T=/data/g/gpetrucc/TREES_94X_FR_240518
-    PBASE="~/www/FakeRate_MC/104X/${ANALYSIS}/fr-mc/NewLFMatching_LFMatch3/$YEAR"
+    T=/eos/cms/store/user/ipapaver/FRNtuples_${YEAR}
     TREE="NanoAOD";
     ;;
 susy) 
@@ -25,55 +22,61 @@ susy)
 esac;
 
 
-BCORE=" --s2v --tree ${TREE} susy-sos-v2-clean/lepton-fr/lepton_mca${YEAR}_frstudies_LFMatch3.txt susy-sos-v2-clean/lepton-fr/sos_fr_den.txt"
-BCORE="${BCORE} --Fs /eos/cms/store/cmst3/user/vtavolar/susySOS/friends_fromv5/$YEAR/recleaner_mc_new/"
+
+LEPTON=$1
+TRIGGER=$2; if [[ "$2" == "" ]]; then exit 1; fi
+PBASE="~/www/FakeRate_MC_QCDMuTriggersBiasStudy_${YEAR}/testSetUp/fr-mc/${LEPTON}_newFO_TuneFO/"
+BCORE=" --s2v --tree ${TREE} susy-sos/lepton-fr/mca-qcd1l-mc.txt susy-sos/lepton-fr/qcd1l.txt "
+BCORE="${BCORE}  --Fs {P}/FRiendTreesObjTaggers_${YEAR}"
 BASE="python mcEfficiencies.py $BCORE --ytitle 'Fake rate'"
 PLOTTER="python mcPlots.py $BCORE   "
 
 #Num='muon_tight'
-
-
 BG=" -j 8 "; if [[ "$1" == "-b" ]]; then BG=" -j 4 & "; shift; fi
 
-#if [[ "$3" == "muon"]]; then echo "something" ; fi #Num='muon_tight';fi;
-#if [[ "$LEPTON" == "muon" ]]; then Num='muon_tight'; else Num='ele_tight'; fi;
+B0="$BASE -P $T  susy-sos/lepton-fr/qcd1l_num.txt susy-sos/lepton-fr/make_fake_rates_xvars.txt --groupBy cut " 
 
-
-B0="$BASE -P $T  susy-sos-v2-clean/lepton-fr/sos_fr_num.txt susy-sos-v2-clean/lepton-fr/make_fake_rates_xvars.txt --groupBy cut " 
 B0="$B0" #--showRatio --ratioRange 0.00 1.99   --yrange 0 0.35 " 
-B1="${PLOTTER} -P $T susy-sos-v2-clean/lepton-fr/make_fake_rates_plots.txt"
-B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
-XVAR2="'pt_fine_30'"
-XVAR1="'pt_fine'"
+#B1="${PLOTTER} -P $T susy-sos-v2-clean/lepton-fr/make_fake_rates_plots.txt"
+#B1="$B1 --showRatio --maxRatioRange 0 2 --plotmode=norm -f "
+XVAR2="'pt_fine'"
+XVAR1="'Jetpt_fine'"
 
-CommonDen="-E ^FO$"
-MuDen="--sP muon_tight $CommonDen -E ^mu$"
-ElDen="--sP ele_tight $CommonDen -E ^ele$"
-MuBarDen="--sP muon_tight_Barrel $CommonDen -E ^mu$ -E ^barrel$"
-ElBarDen="--sP ele_tight_Barrel  $CommonDen -E ^ele$ -E ^barrel$"
-MuEndDen="--sP muon_tight_End $CommonDen -E ^mu$ -E ^endcap$"
-ElEndDen="--sP ele_tight_End $CommonDen -E ^ele$ -E ^endcap$"
+case $LEPTON in
+    mu) 
+      CommonDen="-E ^mu_den_noBTag$ -E ^relIso$"
+      DEN="--sP muon_tight -E ^mu$ $CommonDen";
+      VAR="$DEN --sP $XVAR2";
+      nLep="nMuon";
+      PROCESS="QCDMu_bjets,QCDMu_cjets,QCDMu_ljets";;
+    el)
+      CommonDen="-E ^el_den_noBTag$ -E ^relIso$"
+      DEN="--sP ele_tight -E ^el$ $CommonDen ";
+      VAR="$DEN --sP $XVAR2";
+      nLep="nElectron";
+      PROCESS="QCDEl_red,QCDEl_bjets,QCDEl_cjets,QCDEl_ljets";;
+esac
 
-MuFakeVsPt="$MuDen --sP $XVAR2" 
-ElFakeVsPt="$ElDen --sP $XVAR2"
-MuFakeVsPt_Barr="$MuBarDen --sP $XVAR2" 
-ElFakeVsPt_Barr="$ElBarDen --sP $XVAR2"
-MuFakeVsPt_End="$MuEndDen --sP $XVAR2" 
-ElFakeVsPt_End="$ElEndDen --sP $XVAR2"  
-#MuFakeVsPtLongBin="$MuDen ${BDen} --sP '${ptJI}_${XVar}_coarselongbin' --sp TT_red   --xcut 10 999 --xline 15 " 
-#ElFakeVsPtLongBin="$ElDen ${BDen} --sP '${ptJI}_${XVar}_coarselongbin' --sp TT_redNC --xcut 10 999 --xline 15 " 
-echo "( $B0 --legend=TL $MuFakeVsPt -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/MuFakeVsPt_InclusiveEta_LF.root  ${BG})"
-echo "( $B0 --legend=TL $ElFakeVsPt -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/EleFakeVsPt_InclusiveEta_LF.root  ${BG})"
-echo "( $B0 --legend=TL $MuFakeVsPt_Barr -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/MuFakeVsPt_Barrel_LF.root  ${BG})"
-echo "( $B0 --legend=TL $ElFakeVsPt_Barr -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/EleFakeVsPt_Barrel_LF.root  ${BG})"
-echo "( $B0 --legend=TL $MuFakeVsPt_End -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/MuFakeVsPt_Endcap_LF.root  ${BG})"
-echo "( $B0 --legend=TL $ElFakeVsPt_End -p WJets_light,DY_jets_light,TT_jets_light -o $PBASE/$what/EleFakeVsPt_Endcap_LF.root  ${BG})"
+case $TRIGGER in
+    Mu3_PFJet40) 
+        LepPt="-A 'entry point' lepPt 'LepGood_pt>3'"
+        TRIGGERName="$TRIGGER";;
+    Mu8)         
+        LepPt="-A 'entry point' lepPt 'LepGood_pt>8'"
+        TRIGGERName="$TRIGGER";;
+    Ele8)
+        TRIGGER="Ele8_CaloIdM_TrackIdM_PFJet30" 
+        LepPt="-A 'entry point' lepPt 'LepGood_pt>8'"
+        TRIGGERName="$TRIGGER";;
+    PFJet) 
+        TRIGGER="PFJet25||HLT_PFJet40||HLT_PFJet60||HLT_PFJet80||HLT_PFJet80||HLT_PFJet140||HLT_PFJet200||HLT_PFJet260"
+        TRIGGERName="PFJet";;
+esac;
 
-echo "( $B0 --legend=TL $MuFakeVsPt -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/MuFakeVsPt_InclusiveEta_HF.root  ${BG})"
-echo "( $B0 --legend=TL $ElFakeVsPt -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/EleFakeVsPt_InclusiveEta_HF.root  ${BG})"
-echo "( $B0 --legend=TL $MuFakeVsPt_Barr -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/MuFakeVsPt_Barrel_HF.root  ${BG})"
-echo "( $B0 --legend=TL $ElFakeVsPt_Barr -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/EleFakeVsPt_Barrel_HF.root  ${BG})"
-echo "( $B0 --legend=TL $MuFakeVsPt_End -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/MuFakeVsPt_Endcap_HF.root  ${BG})"
-echo "( $B0 --legend=BR $ElFakeVsPt_End -p WJets_HF,DY_jets_HF,TT_jets_HF -o $PBASE/$what/EleFakeVsPt_Endcap_HF.root  ${BG})"
+
+#Nominal Test bTagDeepCSV Cut FO definition
+echo "( $B0 --legend=TR $VAR  -p $PROCESS -A 'entry point' trigger 'HLT_${TRIGGER}' -A 'entry point' nLep '$nLep<=1' --xcut 0 50 --yrange 0 1 $LepPt -A 'entry point' awayJetPt 'LepGood_awayJet_pt>50' -A 'entry point' eta 'abs(LepGood_eta)<1.2' -L susy-sos/lepton-fr/frPuReweight.cc -W 'puw${TRIGGERName}_${YEAR}(PV_npvsGood)' -o $PBASE/QCD_${TRIGGERName}_Barrel.root  ${BG})"
+
+echo "( $B0 --legend=TR $VAR  -p $PROCESS -A 'entry point' trigger 'HLT_${TRIGGER}' -A 'entry point' nLep '$nLep<=1' --xcut 0 50 --yrange 0 1 $LepPt -A 'entry point' awayJetPt 'LepGood_awayJet_pt>50' -A 'entry point' eta 'abs(LepGood_eta)>1.2 && abs(LepGood_eta)<2.4' -L susy-sos/lepton-fr/frPuReweight.cc -W 'puw${TRIGGERName}_${YEAR}(PV_npvsGood)' -o $PBASE/QCD_${TRIGGERName}_Endcap.root  ${BG})"
 
 
