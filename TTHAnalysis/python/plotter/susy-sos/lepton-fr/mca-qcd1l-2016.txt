@@ -1,0 +1,7 @@
+# vim: syntax=sh
+#data : DoubleMuon_Run2016B_17Jul2018+DoubleMuon_Run2016C_17Jul2018+DoubleMuon_Run2016D_17Jul2018+DoubleMuon_Run2016E_17Jul2018+DoubleMuon_Run2016F_17Jul2018+DoubleMuon_Run2016G_17Jul2018+DoubleMuon_Run2016H_17Jul2018; FillColor=ROOT.kBlack, Label="Data"
+data : DoubleMuon_Run2016B_1June2019+DoubleMuon_Run2016C_1June2019+DoubleMuon_Run2016D_1June2019+DoubleMuon_Run2016E_1June2019+DoubleMuon_Run2016F_1June2019+DoubleMuon_Run2016G_1June2019+DoubleMuon_Run2016H_1June2019; FillColor=ROOT.kBlack, Label="Data"
+#data : DoubleEG_Run2016B_1June2019+DoubleEG_Run2016C_1June2019+DoubleEG_Run2016D_1June2019+DoubleEG_Run2016E_1June2019+DoubleEG_Run2016F_1June2019+DoubleEG_Run2016G_1June2019+DoubleEG_Run2016H_1June2019; FillColor=ROOT.kBlack, Label="Data"
+data : SingleMuon_Run2016B_1June2019+SingleMuon_Run2016C_1June2019+SingleMuon_Run2016D_1June2019+SingleMuon_Run2016E_1June2019+SingleMuon_Run2016F_1June2019+SingleMuon_Run2016G_1June2019+SingleMuon_Run2016H_1June2019; FillColor=ROOT.kBlack, Label="Data"
+data : JetHT_Run2016B_1June2019+JetHT_Run2016C_1June2019+JetHT_Run2016D_1June2019+JetHT_Run2016E_1June2019+JetHT_Run2016F_1June2019+JetHT_Run2016G_1June2019+JetHT_Run2016H_1June2019; FillColor=ROOT.kBlack, Label="Data"
+incl_mc : + ; IncludeMca="susy-sos/lepton-fr/mca-qcd1l-mc.txt"
